@@ -8,7 +8,7 @@ import {
   degreesToMils,
   milsToDegrees,
 } from './azimuth.js';
-import { pacesForDistance, distanceFromPaces } from './pace.js';
+import { pacesForDistance, distanceFromPaces, pacesDivideEvenly } from './pace.js';
 import { MAP_PRESET } from './config.js';
 import { presetGm, startingGm, gmToStore } from './settings.js';
 
@@ -197,9 +197,7 @@ function updatePace({ conditionChanged = false } = {}) {
   else {
     attempt('walked-result', () => {
       const covered = distanceFromPaces(count, walked);
-      // Whole only when the paces divide evenly; otherwise say it is rounded.
-      const whole = (walked * 100) % count === 0;
-      const tail = whole ? `= ${covered}` : `≈ ${covered} (nearest meter)`;
+      const tail = pacesDivideEvenly(count, walked) ? `= ${covered}` : `≈ ${covered} (nearest meter)`;
       return { value: `${covered} m`, work: `${walked} ÷ ${count} × 100 ${tail}` };
     });
   }

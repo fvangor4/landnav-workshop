@@ -34,7 +34,9 @@ export const MAP_PRESET = {
 };
 ```
 
-Leave `gmAngle` as `null` to make students type it from their own map.
+Leave `gmAngle` as `null` to make students type it from their own map. If the
+setting cannot be read (for example a direction other than east or west), it
+is not used, and the Instructor page says what to fix.
 
 ## Run it locally
 
@@ -69,9 +71,13 @@ The site appears at `https://<your-user>.github.io/<repository>/`.
 
 - When you add a page, script, or stylesheet, add it to the `ASSETS` list in
   `sw.js` so it is available offline. A test fails if you forget.
-- Published changes reach a returning visitor on their second visit, because
-  the first visit is answered from the offline copy while the new files load
-  in the background.
+- Published changes reach a returning visitor on the second page they open
+  afterward. The first page opened is answered from the saved copy while the
+  whole updated site downloads in the background; the next page opened uses
+  it. An update is all or nothing, so a dropped signal never leaves a phone
+  with half of one.
+- The line at the bottom of every page says whether that device has saved its
+  offline copy.
 
 ## Sources
 

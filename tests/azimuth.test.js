@@ -126,3 +126,10 @@ test('more than one decimal place is rejected, so the shown work is never rounde
   assert.throws(() => backAzimuthMils(3199.96), RangeError);
   assert.equal(gridToMagnetic(100.1, 8.3, 'east').value, 91.8);
 });
+
+test('values a hair away from a tenth are rejected too', () => {
+  assert.throws(() => backAzimuth(179.99999999), RangeError);
+  assert.throws(() => backAzimuthMils(3199.99999999), RangeError);
+  assert.throws(() => gridToMagnetic(22, 8.2999999, 'east'), RangeError);
+  assert.equal(backAzimuth(179.9).value, 359.9);
+});

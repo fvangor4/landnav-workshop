@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { pacesForDistance, distanceFromPaces } from '../js/pace.js';
+import { pacesForDistance, distanceFromPaces, pacesDivideEvenly } from '../js/pace.js';
 
 // A pace count is the number of paces (every time the same foot strikes) it
 // takes one person to walk 100 meters. FM 3-25.26, chapter 5.
@@ -67,4 +67,19 @@ test('the unrounded figure is reported so the work can say when it rounded', () 
   const whole = pacesForDistance(66, 350);
   assert.equal(whole.exact, 231);
   assert.equal(whole.rounded, false);
+});
+
+test('pace math takes whole numbers only, so the unrounded figure shown is exact', () => {
+  assert.throws(() => pacesForDistance(66.5, 155), RangeError);
+  assert.throws(() => pacesForDistance(67, 12.5), RangeError);
+  assert.throws(() => distanceFromPaces(66.5, 100), RangeError);
+  assert.throws(() => distanceFromPaces(66, 100.5), RangeError);
+  assert.equal(pacesForDistance(67, 13).exact, 8.71);
+});
+
+test('the walked distance is flagged when it had to be rounded', () => {
+  assert.equal(pacesDivideEvenly(66, 231), true); // 350 m exactly
+  assert.equal(pacesDivideEvenly(66, 33), true); // 50 m exactly
+  assert.equal(pacesDivideEvenly(67, 100), false); // 149.25 m
+  assert.throws(() => pacesDivideEvenly(0, 100), RangeError);
 });

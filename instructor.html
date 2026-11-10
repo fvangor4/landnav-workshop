@@ -42,7 +42,7 @@
         <h3>Send students here</h3>
         <p>Have students type this address into their phone browser:</p>
         <p class="share-url num" id="share-url"></p>
-        <p class="small muted">After the first visit the site works without a signal. <span data-offline-state>Checking whether this device has an offline copy.</span></p>
+        <p class="small muted">After the first visit the site works without a signal. The line at the bottom of every page says whether that device has saved its offline copy.</p>
       </div>
     </section>
 
@@ -74,18 +74,23 @@
   <footer class="site-footer">
     <p><strong>Unofficial training aid.</strong> Not endorsed by the U.S. Army or the Department of Defense. Follow your instructor and current doctrine.</p>
     <p>Written from FM 3-25.26, Map Reading and Land Navigation (approved for public release; distribution is unlimited).</p>
+    <p data-offline-state></p>
   </footer>
 
   <script type="module">
     import { MAP_PRESET } from './js/config.js';
-    import { presetGm } from './js/settings.js';
+    import { presetGm, presetProblem } from './js/settings.js';
 
     const home = new URL('./', location.href);
     document.getElementById('share-url').textContent = home.host + home.pathname;
 
     const status = document.getElementById('preset-status');
     const classMap = presetGm(MAP_PRESET);
-    if (classMap) {
+    const problem = presetProblem(MAP_PRESET);
+    if (problem) {
+      status.textContent = `The class map setting in js/config.js is not being used: ${problem} Students type the G-M angle from their own map until it is fixed.`;
+      status.classList.add('note');
+    } else if (classMap) {
       const direction = classMap.direction === 'west' ? 'westerly' : 'easterly';
       const name = MAP_PRESET.name ? ` for ${MAP_PRESET.name}` : '';
       status.textContent = `The Tools page and worksheet start with a G-M angle of ${classMap.angle}° ${direction}${name}.`;

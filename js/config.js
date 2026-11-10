@@ -8,6 +8,9 @@
 //              Leave as null to make students type it from their own map.
 //   direction  'east' if magnetic north is east (right) of grid north,
 //              'west' if it is west (left) of grid north.
+//
+// If these values cannot be read, the preset is not used and the Instructor
+// page says what to fix.
 
 export const MAP_PRESET = {
   name: '',

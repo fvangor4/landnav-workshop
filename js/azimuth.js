@@ -6,7 +6,7 @@ const round1 = (n) => Math.round(n * 10) / 10;
 // Results are shown to one decimal place. Inputs finer than that would make
 // the displayed work a rounded, and therefore false, equation.
 function requireTenths(value, label) {
-  if (Math.abs(value * 10 - Math.round(value * 10)) > 1e-6) {
+  if (Number(value.toFixed(1)) !== value) {
     throw new RangeError(`${label} can have at most one decimal place.`);
   }
 }

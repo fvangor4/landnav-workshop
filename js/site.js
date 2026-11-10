@@ -71,9 +71,9 @@
     refresh();
   }
 
-  // Offline support. The Instructor page shows the outcome, so a failure to
-  // save the offline copy is visible to someone rather than silent.
-  var offlineState = 'Checking whether this device has an offline copy.';
+  // Offline support. A line in every page's footer shows the outcome, so a
+  // failure to save the offline copy is visible rather than silent.
+  var offlineState = '';
 
   function showOfflineState(text) {
     offlineState = text;
@@ -93,7 +93,10 @@
       return;
     }
     var worker = registration.installing || registration.waiting;
-    if (!worker) return;
+    if (!worker) {
+      showOfflineState('This device has not saved an offline copy yet. Reload the page while you have a signal.');
+      return;
+    }
     worker.addEventListener('statechange', function () {
       if (worker.state === 'activated') showOfflineState('This device has an offline copy.');
       // 'redundant' here means the install failed, for example a missing file.

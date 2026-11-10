@@ -53,7 +53,7 @@ $('answer-form').addEventListener('submit', (event) => {
   }
 
   // Only the first real attempt counts; createScore decides what that is.
-  score.record(n, result.correct);
+  score.record(result.correct);
   updateScore();
 
   if (result.correct) {
@@ -71,7 +71,6 @@ $('answer-form').addEventListener('submit', (event) => {
 });
 
 $('reveal').addEventListener('click', () => {
-  score.reveal();
   feedback('info', `Answer: ${spaced(gridFor(point, digits()))}`);
   $('reveal').hidden = true;
 });

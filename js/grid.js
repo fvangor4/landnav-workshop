@@ -72,28 +72,26 @@ export function checkAnswer(answer, point, digits) {
 }
 
 /**
- * Score keeper for the drill. A point can be read at 4, 6, or 8 digits; each
- * of those is scored once, on the first attempt. Once the answer has been
- * shown, nothing more is scored on that point.
+ * Score keeper for the drill. Each point is scored once, on the first
+ * attempt, whichever precision that attempt was at. After that the point is
+ * free practice: a right answer shows the full reading, and a wrong one
+ * offers it, so later attempts say nothing about the student.
  */
 export function createScore() {
-  let scored = new Set();
+  let pointScored = false;
   let correct = 0;
   let attempts = 0;
   return {
     /** Returns true if this attempt counted toward the score. */
-    record(digits, isCorrect) {
-      if (scored.has(digits)) return false;
-      scored.add(digits);
+    record(isCorrect) {
+      if (pointScored) return false;
+      pointScored = true;
       attempts += 1;
       if (isCorrect) correct += 1;
       return true;
     },
-    reveal() {
-      scored = new Set([4, 6, 8]);
-    },
     nextPoint() {
-      scored = new Set();
+      pointScored = false;
     },
     get correct() {
       return correct;

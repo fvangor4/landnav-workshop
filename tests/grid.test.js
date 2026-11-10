@@ -113,26 +113,27 @@ test('generated grid lines stay between 10 and 89', () => {
   assert.deepEqual([high.x, high.y], [979, 979]);
 });
 
-test('each precision of a point is scored once, on the first attempt', () => {
+test('a point is scored once, on the first attempt at any precision', () => {
   const score = createScore();
-  assert.equal(score.record(6, false), true);
-  assert.equal(score.record(6, true), false); // second try at the same point
+  assert.equal(score.record(false), true);
+  assert.equal(score.record(true), false); // second try at the same point
+  assert.equal(score.record(true), false); // switching precision does not reopen it
   assert.deepEqual([score.correct, score.attempts], [0, 1]);
-
-  assert.equal(score.record(8, true), true); // a different precision still counts
-  assert.deepEqual([score.correct, score.attempts], [1, 2]);
 });
 
-test('nothing more is scored on a point once its answer has been shown', () => {
+test('a correct first answer cannot be counted again at another precision', () => {
   const score = createScore();
-  score.record(8, false);
-  score.reveal();
-  assert.equal(score.record(6, true), false);
-  assert.equal(score.record(4, true), false);
-  assert.deepEqual([score.correct, score.attempts], [0, 1]);
+  assert.equal(score.record(true), true);
+  assert.equal(score.record(true), false);
+  assert.equal(score.record(true), false);
+  assert.deepEqual([score.correct, score.attempts], [1, 1]);
+});
 
+test('a new point can be scored again', () => {
+  const score = createScore();
+  score.record(false);
   score.nextPoint();
-  assert.equal(score.record(6, true), true);
+  assert.equal(score.record(true), true);
   assert.deepEqual([score.correct, score.attempts], [1, 2]);
 });
 

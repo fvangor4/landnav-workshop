@@ -176,3 +176,27 @@ width, in projector view, offline, and in print preview.
     into tested modules instead.
 - known limit: a page that opens at the instant an update finishes could get
   old HTML with new scripts for that one load. Not handled.
+- re-review of 003e058: 10 findings. Fixed in a second round:
+  1-2 an update could still be half-saved if a download died after its
+    headers, and a page could read the cache mid-write. Updates now go into
+    a separate cache, are marked ready only after every body is read, and
+    are switched to only when the next page is opened.
+  3 a drill point is now scored once in total, not once per precision.
+  4 an unreadable preset direction is refused and reported on the
+    Instructor page, not coerced to east. 'West', 'W', 'westerly' are read.
+  5 the one-decimal check no longer has a tolerance.
+  6 pace math takes whole numbers only; the "rounded" decision for walked
+    distance moved into js/pace.js.
+  7 every page's footer now says whether the device has an offline copy.
+  10 worksheet address values are validated as strictly as the math.
+  8 (tests): added for no-cache, the single-update guard, body failure,
+    mid-update reads, worker restart. Disagreement on the rest: the page
+    scripts (site.js, tools-ui.js, drill-ui.js, worksheet-ui.js) still have
+    no unit tests, per the approved testing approach. Their wiring was
+    checked in the browser: no save on a fresh load, one score per point,
+    address values restored, footer status shown.
+  9 not applicable: the earlier code was never deployed, so no phone holds
+    a preset saved by it.
+- known limit, narrowed: two pages opened in different tabs within the same
+  moment as an update switch could differ in version. A single page load
+  cannot mix versions.
