@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instructor | Land Nav Workshop</title>
+  <meta name="description" content="Instructor tools for a land navigation class: projector view and a printable worksheet with an answer key.">
+  <meta name="theme-color" content="#45562a">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/site.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Land Nav <span>Workshop</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Reference</a>
+        <a href="tools.html">Tools</a>
+        <a href="drill.html">Grid drill</a>
+        <a href="instructor.html" aria-current="page">Instructor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="page-title">Instructor</h1>
+    <p class="lede">Put the site on the classroom screen and hand out practice problems.</p>
+
+    <section class="section">
+      <h2>Projector view</h2>
+      <div class="card">
+        <p>Larger type, higher contrast, and a wide layout for a classroom screen. It applies to every page and stays on in this browser until you turn it off.</p>
+        <p><strong data-projector-state>Projector view is off.</strong></p>
+        <div class="btn-row">
+          <button class="btn" type="button" data-action="projector-toggle" aria-pressed="false">Turn projector view on</button>
+        </div>
+        <p class="small muted" style="margin-top:0.6rem">Students do not need it. It only changes the browser you switch it on in.</p>
+      </div>
+      <div class="card">
+        <h3>Send students here</h3>
+        <p>Have students type this address into their phone browser:</p>
+        <p class="share-url num" id="share-url"></p>
+        <p class="small muted">After the first visit the site works without a signal.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Printable worksheet</h2>
+      <div class="card">
+        <p>Twenty-one practice problems: azimuth conversion, back azimuth, pace count, and grid coordinates. The answer key prints on its own page.</p>
+        <p class="small muted">Each worksheet has a number. The same number always prints the same problems, so you can reprint a sheet or its key later.</p>
+        <div class="btn-row">
+          <a class="btn" href="worksheet.html">Open the worksheet</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Handout and class map</h2>
+      <div class="card">
+        <h3>Reference cards as a handout</h3>
+        <p>Open the <a href="./">Reference</a> page and choose Print these cards at the bottom. Menus and buttons are left off the printout.</p>
+      </div>
+      <div class="card">
+        <h3>Class map G-M angle</h3>
+        <p id="preset-status">Checking the class map setting.</p>
+        <p class="small muted">To change it, edit <code>js/config.js</code> in the site's repository. Students can always type a different value.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Unofficial training aid.</strong> Not endorsed by the U.S. Army or the Department of Defense. Follow your instructor and current doctrine.</p>
+    <p>Written from FM 3-25.26, Map Reading and Land Navigation (approved for public release; distribution is unlimited).</p>
+  </footer>
+
+  <script type="module">
+    import { MAP_PRESET } from './js/config.js';
+
+    const home = new URL('./', location.href);
+    document.getElementById('share-url').textContent = home.host + home.pathname;
+
+    const status = document.getElementById('preset-status');
+    if (Number.isFinite(MAP_PRESET.gmAngle)) {
+      const direction = MAP_PRESET.direction === 'west' ? 'westerly' : 'easterly';
+      const name = MAP_PRESET.name ? ` for ${MAP_PRESET.name}` : '';
+      status.textContent = `The Tools page and worksheet start with a G-M angle of ${MAP_PRESET.gmAngle}° ${direction}${name}.`;
+    } else {
+      status.textContent = 'No class map is set. Students type the G-M angle from their own map.';
+    }
+  </script>
+</body>
+</html>

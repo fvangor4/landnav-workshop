@@ -612,3 +612,120 @@ a:focus-visible,
 [hidden] {
   display: none !important;
 }
+
+#score {
+  margin-top: 0.7rem;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.1em 0.3em;
+  border-radius: 0.25rem;
+}
+
+.share-url {
+  font-size: 1.15rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Projector view ----------
+   Switched on from the Instructor page. Higher contrast everywhere; the
+   larger type and wide layout only apply on a screen wide enough for them. */
+
+.projector-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 1rem;
+  background: #000;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.projector-bar button {
+  font: inherit;
+  padding: 0.3rem 0.9rem;
+  min-height: 2.25rem;
+  border-radius: 0.4rem;
+  border: 2px solid #fff;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+}
+
+html[data-view="projector"] {
+  --paper: #ffffff;
+  --card: #ffffff;
+  --ink: #000000;
+  --muted: #2b2b2b;
+  --line: #6f6f6f;
+  --olive: #2f3d17;
+  --olive-dark: #1f290d;
+  --note-bg: #fff1c2;
+}
+
+html[data-view="projector"] .sk-c,
+html[data-view="projector"] .sk-w {
+  stroke-width: 2;
+}
+
+html[data-view="projector"] .sk-thin .sk-c {
+  stroke-width: 1.4;
+}
+
+html[data-view="projector"] .gs-fine {
+  stroke: #9a9a9a;
+}
+
+html[data-view="projector"] .gs-mid {
+  stroke: #555;
+}
+
+@media (min-width: 900px) {
+  html[data-view="projector"] {
+    font-size: 150%;
+  }
+
+  html[data-view="projector"] main,
+  html[data-view="projector"] .site-header .inner,
+  html[data-view="projector"] .site-footer {
+    max-width: none;
+    padding-left: 3vw;
+    padding-right: 3vw;
+  }
+
+  html[data-view="projector"] .site-nav {
+    max-width: 36rem;
+  }
+
+  /* Lay each section's cards out in columns; headings span the full width. */
+  html[data-view="projector"] .section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  html[data-view="projector"] .section > :not(.card) {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  html[data-view="projector"] .section > .card {
+    margin-bottom: 0;
+    height: 100%;
+  }
+
+  html[data-view="projector"] .drill-figures {
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  html[data-view="projector"] .grid-square {
+    max-width: 30rem;
+  }
+}
