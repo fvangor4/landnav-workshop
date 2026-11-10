@@ -25,6 +25,8 @@ function createWorld() {
     online: true,
     calls: [], // every fetch: { href, options }
     brokenBodies: new Set(), // hrefs whose download dies after the headers
+    failingPuts: new Set(), // hrefs the phone refuses to save (storage full)
+    putGates: new Map(), // href -> promise a save waits on (a write in progress)
     gate: null, // when set, bodies wait on this promise before arriving
     publish: (version) => ASSETS.forEach((href) => network.set(href, `${version}:${href}`)),
     unpublish: (path) => network.delete(new URL(path, SCOPE).href),
@@ -33,7 +35,7 @@ function createWorld() {
   return world;
 }
 
-function startWorker(world = createWorld()) {
+function startWorker(world = createWorld(), scope = SCOPE) {
   const listeners = {};
 
   const caches = {
@@ -48,7 +50,10 @@ function startWorker(world = createWorld()) {
           return entry ? new Response(entry.body, { headers: entry.headers }) : undefined;
         },
         async put(target, response) {
-          store.set(urlOf(target).href, {
+          const { href } = urlOf(target);
+          if (world.failingPuts.has(href)) throw new Error('storage full');
+          if (world.putGates.has(href)) await world.putGates.get(href);
+          store.set(href, {
             body: await response.arrayBuffer(),
             headers: [...response.headers],
           });
@@ -86,7 +91,7 @@ function startWorker(world = createWorld()) {
   };
 
   const self = {
-    location: new URL('sw.js', SCOPE),
+    location: new URL('sw.js', scope),
     addEventListener: (type, handler) => {
       listeners[type] = handler;
     },
@@ -113,7 +118,7 @@ function startWorker(world = createWorld()) {
     };
   }
 
-  const get = (path, mode) => dispatch('fetch', { url: new URL(path, SCOPE).href, method: 'GET', mode });
+  const get = (path, mode) => dispatch('fetch', { url: new URL(path, scope).href, method: 'GET', mode });
   const bodyOf = async (pending) => {
     const response = await pending;
     return response ? response.text() : undefined;
@@ -281,14 +286,64 @@ test('an unchanged site is not saved again', async () => {
   assert.deepEqual([...worker.world.stores.keys()], before);
 });
 
-test('caches left by an earlier version of the worker are cleared', async () => {
+test('a copy that could not be fully saved is thrown away, not left behind', async () => {
+  const worker = await installed();
+  worker.world.publish('v2');
+  worker.world.failingPuts.add(`${SCOPE}js/azimuth.js`);
+  await worker.open('index.html');
+  assert.equal(worker.world.stores.size, 1, 'the half-written copy was deleted');
+  assert.ok((await worker.open('tools.html')).startsWith('v1:'));
+  assert.deepEqual(await versionsServed(worker), new Set(['v1']));
+});
+
+test('a copy that is still being written is never served, and is not deleted', async () => {
+  const worker = await installed();
+  worker.world.publish('v2');
+
+  let finishWrite;
+  worker.world.putGates.set(
+    `${SCOPE}js/azimuth.js`,
+    new Promise((resolve) => {
+      finishWrite = resolve;
+    }),
+  );
+  const visit = worker.openWithoutWaiting('index.html');
+  await visit.body;
+  await new Promise((resolve) => setTimeout(resolve, 20)); // every other file is now written
+
+  // Another page opens while one file of the update is still being saved.
+  const second = worker.openWithoutWaiting('tools.html');
+  assert.ok((await second.body).startsWith('v1:'), 'the unfinished copy is not used');
+  assert.deepEqual(await versionsServed(worker), new Set(['v1']));
+
+  finishWrite();
+  await Promise.all([visit.settled, second.settled]);
+  worker.world.putGates.clear();
+  assert.ok((await worker.open('index.html')).startsWith('v2:'), 'the finished copy survived and is used');
+  assert.deepEqual(await versionsServed(worker), new Set(['v2']));
+});
+
+test('two copies of the site on one web address do not touch each other', async () => {
+  // GitHub project sites share an origin: user.github.io/site/ and /other/.
   const world = createWorld();
-  world.stores.set('landnav-v1', new Map([[`${SCOPE}index.html`, { body: 'old', headers: [] }]]));
-  const worker = startWorker(world);
-  world.publish('v1');
-  await worker.install();
-  assert.ok((await worker.open('index.html')).startsWith('v1:'));
-  assert.equal(world.stores.has('landnav-v1'), false);
+  const otherScope = 'https://example.test/other/';
+  const otherAssets = ASSETS.map((href) => href.replace(SCOPE, otherScope));
+  ASSETS.forEach((href) => world.network.set(href, `v1:${href}`));
+  otherAssets.forEach((href) => world.network.set(href, `other:${href}`));
+
+  const first = startWorker(world, SCOPE);
+  await first.install();
+  await first.open('index.html');
+  const second = startWorker(world, otherScope);
+  await second.install();
+  await second.open('index.html');
+  await second.open('tools.html');
+
+  world.online = false;
+  assert.ok((await first.open('index.html')).startsWith('v1:'));
+  assert.deepEqual(await versionsServed(first), new Set(['v1']));
+  assert.ok((await second.open('index.html')).startsWith('other:'));
+  assert.equal(world.stores.size, 2, 'each site keeps its own copy');
 });
 
 test('update requests bypass the browser cache, so stale files are not saved', async () => {

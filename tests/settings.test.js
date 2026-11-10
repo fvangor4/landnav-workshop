@@ -73,7 +73,23 @@ test('a worksheet address restores its number, G-M angle, and direction', () => 
     gmAngle: 11.5,
     direction: 'west',
   });
-  assert.deepEqual(worksheetStart('?n=0&gm=0', preset, () => 77), { number: 0, gmAngle: 0, direction: 'east' });
+  assert.deepEqual(worksheetStart('?n=0&gm=0&dir=east', preset, () => 77), { number: 0, gmAngle: 0, direction: 'east' });
+  assert.deepEqual(worksheetStart('?n=9&gm=11.5&dir=West', preset, () => 77), { number: 9, gmAngle: 11.5, direction: 'west' });
+});
+
+test('the angle and direction in an address are used together or not at all', () => {
+  const classMap = { number: 1234, gmAngle: 8, direction: 'east' };
+  // A usable half is never paired with the class map's other half.
+  for (const search of [
+    '?n=1234&gm=200&dir=west',
+    '?n=1234&gm=8.25&dir=west',
+    '?n=1234&gm=11.5&dir=sideways',
+    '?n=1234&gm=11.5',
+    '?n=1234&dir=west',
+  ]) {
+    assert.deepEqual(worksheetStart(search, preset, () => 77), classMap, search);
+  }
+  assert.deepEqual(worksheetStart('?n=1234&gm=11.5', noPreset, () => 77), { number: 1234, gmAngle: null, direction: 'east' });
 });
 
 test('a bare worksheet address uses a fresh number and the class map', () => {

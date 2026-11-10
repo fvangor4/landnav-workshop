@@ -36,12 +36,16 @@ const ASSETS = [
   'icon.svg',
 ];
 
-// Each saved copy is a cache named landnav-<time saved>. The READY entry is
-// written last, so a copy without it is incomplete and is never served.
-const PREFIX = 'landnav-';
-const READY = '__ready';
-
 const urlOf = (asset) => new URL(asset, self.location.href).href;
+
+// Each saved copy is a cache named landnav:<site folder>:<time saved>. The
+// folder is part of the name because cache storage is shared by everything
+// on one web address, and GitHub project sites all share <user>.github.io:
+// two copies of this site must not serve or delete each other's files.
+// The READY entry is written last, so a copy without it is incomplete and is
+// never served.
+const PREFIX = `landnav:${new URL(urlOf('./')).pathname}:`;
+const READY = '__ready';
 const stamp = (name) => Number(name.slice(PREFIX.length));
 
 let live = null; // name of the copy being served
@@ -65,8 +69,8 @@ async function promote() {
   const ready = await readyCopies();
   if (ready.length > 0) live = ready[ready.length - 1];
   if (!live) return;
-  // Older copies, and caches from earlier versions of this worker. Anything
-  // newer than the copy in use is an update still being written; leave it.
+  // Older copies of this site. Anything newer than the copy in use is an
+  // update still being written; leave it.
   const stale = (await caches.keys()).filter(
     (name) => name.startsWith(PREFIX) && name !== live && !(stamp(name) > stamp(live)),
   );

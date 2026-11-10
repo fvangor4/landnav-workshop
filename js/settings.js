@@ -83,12 +83,17 @@ export function worksheetStart(search, preset, randomNumber) {
   const n = /^\d+$/.test(given('n')) ? Number(given('n')) : NaN;
   const validNumber = Number.isInteger(n) && n <= MAX_WORKSHEET_NUMBER;
 
+  // The angle and its direction are one setting. Use the pair from the
+  // address only if both halves can be read; never mix one of them with the
+  // class map's other half.
   const gm = /^\d+(\.\d+)?$/.test(given('gm')) ? Number(given('gm')) : NaN;
-  const dir = given('dir') === 'east' || given('dir') === 'west' ? given('dir') : null;
+  const dir = parseDirection(given('dir'));
+  const fromAddress = validAngle(gm) && dir ? { angle: gm, direction: dir } : null;
+  const setting = fromAddress || fromMap || { angle: null, direction: 'east' };
 
   return {
     number: validNumber ? n : randomNumber(),
-    gmAngle: validAngle(gm) ? gm : fromMap ? fromMap.angle : null,
-    direction: dir || (fromMap ? fromMap.direction : 'east'),
+    gmAngle: setting.angle,
+    direction: setting.direction,
   };
 }

@@ -200,3 +200,11 @@ width, in projector view, offline, and in print preview.
 - known limit, narrowed: two pages opened in different tabs within the same
   moment as an update switch could differ in version. A single page load
   cannot mix versions.
+- re-review of e8cd5a8: no blocking findings, 4 minor, all fixed:
+  1 saved copies are now named per site folder, so two copies of the site
+    under one GitHub account do not serve or delete each other's files.
+  2 a worksheet link's angle and direction are used as a pair or not at all.
+  3 tests added for a save that fails partway and for a copy still being
+    written; confirmed by mutation that they catch a marker written first,
+    a missing cleanup, and deleting newer copies.
+  4 the footer status line is asserted on every page.

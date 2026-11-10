@@ -40,6 +40,10 @@ test('every page loads the shared script that registers the service worker', () 
     const html = readFileSync(join(root, page), 'utf8');
     assert.ok(html.includes('<script src="js/site.js"></script>'), `${page} does not load js/site.js`);
     assert.ok(html.includes('rel="manifest"'), `${page} does not link the manifest`);
+    assert.ok(
+      html.includes('<p data-offline-state></p>'),
+      `${page} has no line saying whether the device has an offline copy`,
+    );
   }
   const site = readFileSync(join(root, 'js/site.js'), 'utf8');
   assert.ok(/serviceWorker\.register\(['"]sw\.js['"]\)/.test(site), 'js/site.js does not register sw.js');
