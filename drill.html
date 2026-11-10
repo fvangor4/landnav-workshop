@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grid drill | Land Nav Workshop</title>
+  <meta name="description" content="Practice reading 4-, 6-, and 8-digit grid coordinates on a generated grid square.">
+  <meta name="theme-color" content="#45562a">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/site.js"></script>
+  <script type="module" src="js/drill-ui.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Land Nav <span>Workshop</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Reference</a>
+        <a href="tools.html">Tools</a>
+        <a href="drill.html" aria-current="page">Grid drill</a>
+        <a href="instructor.html">Instructor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="page-title">Grid drill</h1>
+    <p class="lede">Find the grid coordinate of the red point. Read right, then up.</p>
+
+    <div class="card">
+      <fieldset class="seg">
+        <legend>How many digits</legend>
+        <label><input type="radio" name="digits" value="4"><span>4 digit</span></label>
+        <label><input type="radio" name="digits" value="6" checked><span>6 digit</span></label>
+        <label><input type="radio" name="digits" value="8"><span>8 digit</span></label>
+      </fieldset>
+      <p class="small muted" id="digits-hint"></p>
+
+      <div class="drill-figures">
+        <figure class="grid-figure">
+          <div id="square"></div>
+          <figcaption>One grid square, 1,000 m on each side. Each small division is 100 m.</figcaption>
+        </figure>
+        <figure class="grid-figure" id="zoom-figure" hidden>
+          <div id="zoom"></div>
+          <figcaption>Enlarged: the 100 m square around the point. Each small division is 10 m.</figcaption>
+        </figure>
+      </div>
+
+      <form id="answer-form" novalidate>
+        <div class="field">
+          <label for="answer" id="answer-label">Your 6-digit grid</label>
+          <input id="answer" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="6 digits">
+        </div>
+        <div class="btn-row">
+          <button class="btn" type="submit">Check</button>
+          <button class="btn secondary" type="button" id="reveal" hidden>Show answer</button>
+          <button class="btn secondary" type="button" id="next">New point</button>
+        </div>
+      </form>
+
+      <div class="feedback" id="feedback" aria-live="polite" hidden></div>
+      <p class="small muted" id="score"></p>
+    </div>
+
+    <div class="card">
+      <h3>How to read it</h3>
+      <ol class="small">
+        <li>Find the grid line to the <strong>left</strong> of the point. Its number is the first two digits.</li>
+        <li>Find the grid line <strong>below</strong> the point. Its number is the next two digits. That is the 4-digit grid.</li>
+        <li>For 6 digits, count the 100 m divisions to the right of the left line, then up from the bottom line.</li>
+        <li>For 8 digits, do the same again with the 10 m divisions.</li>
+        <li>Never round up. Use the division the point has already passed.</li>
+      </ol>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Unofficial training aid.</strong> Not endorsed by the U.S. Army or the Department of Defense. Follow your instructor and current doctrine.</p>
+    <p>Written from FM 3-25.26, Map Reading and Land Navigation (approved for public release; distribution is unlimited).</p>
+  </footer>
+</body>
+</html>

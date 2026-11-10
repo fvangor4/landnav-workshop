@@ -111,11 +111,12 @@ function updateDeclination() {
     const r = convert(azimuth, gm, direction);
     const sign = r.operation === 'add' ? '+' : MINUS;
     const rule = `${direction === 'east' ? 'Easterly' : 'Westerly'} G-M angle, ${from.toLowerCase()} to ${to.toLowerCase()}: ${r.operation}.`;
-    let work = `${azimuth}° ${sign} ${gm}° = ${r.raw}°`;
+    const raw = String(r.raw).replace('-', MINUS);
+    let work = `${azimuth}° ${sign} ${gm}° = ${raw}°`;
     if (r.wrapped) {
       work += r.raw < 0
-        ? `, then ${r.raw}° + 360° = ${r.value}°`
-        : `, then ${r.raw}° ${MINUS} 360° = ${r.value}°`;
+        ? `, then ${raw}° + 360° = ${r.value}°`
+        : `, then ${raw}° ${MINUS} 360° = ${r.value}°`;
     }
     return { value: `${r.value}°`, work: `${rule} ${work}` };
   });
