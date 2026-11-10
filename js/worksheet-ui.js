@@ -2,6 +2,7 @@
 // No problem generation or math lives here.
 
 import { makeWorksheet } from './problems.js';
+import { worksheetStart } from './settings.js';
 import { gridSquareSvg, zoomSquareSvg } from './grid-svg.js';
 import { MAP_PRESET } from './config.js';
 
@@ -102,19 +103,10 @@ function render() {
 
 // ---------- Start: address first, then the class map preset ----------
 
-const query = new URLSearchParams(location.search);
-const queryNumber = Number(query.get('n'));
-$('ws-number').value = query.has('n') && Number.isInteger(queryNumber) && queryNumber >= 0 ? queryNumber : randomNumber();
-
-const queryGm = Number(query.get('gm'));
-if (query.has('gm') && Number.isFinite(queryGm)) {
-  $('ws-gm').value = queryGm;
-} else if (Number.isFinite(MAP_PRESET.gmAngle)) {
-  $('ws-gm').value = MAP_PRESET.gmAngle;
-}
-
-const startDirection = query.get('dir') || MAP_PRESET.direction;
-document.querySelector(`input[name="ws-dir"][value="${startDirection === 'west' ? 'west' : 'east'}"]`).checked = true;
+const start = worksheetStart(location.search, MAP_PRESET, randomNumber);
+$('ws-number').value = start.number;
+if (start.gmAngle !== null) $('ws-gm').value = start.gmAngle;
+document.querySelector(`input[name="ws-dir"][value="${start.direction}"]`).checked = true;
 
 document.querySelectorAll('#ws-number, #ws-gm, input[name="ws-dir"]').forEach((el) => el.addEventListener('input', render));
 $('ws-new').addEventListener('click', () => {

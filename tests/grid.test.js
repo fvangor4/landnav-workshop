@@ -98,3 +98,74 @@ test('makePoint is driven by the supplied random source', () => {
   assert.deepEqual(makePoint(fixed), makePoint(fixed));
   assert.notDeepEqual(makePoint(() => 0.1), makePoint(() => 0.9));
 });
+
+// ---- Added after review ----
+
+import { createScore } from '../js/grid.js';
+import { gridSquareSvg, zoomSquareSvg } from '../js/grid-svg.js';
+
+test('generated grid lines stay between 10 and 89', () => {
+  const low = makePoint(() => 0);
+  const high = makePoint(() => 0.999999);
+  assert.deepEqual([low.easting, low.northing], [10, 10]);
+  assert.deepEqual([high.easting, high.northing], [89, 89]);
+  assert.deepEqual([low.x, low.y], [20, 20]);
+  assert.deepEqual([high.x, high.y], [979, 979]);
+});
+
+test('each precision of a point is scored once, on the first attempt', () => {
+  const score = createScore();
+  assert.equal(score.record(6, false), true);
+  assert.equal(score.record(6, true), false); // second try at the same point
+  assert.deepEqual([score.correct, score.attempts], [0, 1]);
+
+  assert.equal(score.record(8, true), true); // a different precision still counts
+  assert.deepEqual([score.correct, score.attempts], [1, 2]);
+});
+
+test('nothing more is scored on a point once its answer has been shown', () => {
+  const score = createScore();
+  score.record(8, false);
+  score.reveal();
+  assert.equal(score.record(6, true), false);
+  assert.equal(score.record(4, true), false);
+  assert.deepEqual([score.correct, score.attempts], [0, 1]);
+
+  score.nextPoint();
+  assert.equal(score.record(6, true), true);
+  assert.deepEqual([score.correct, score.attempts], [1, 2]);
+});
+
+// The drawing must agree with gridFor, or the figure and the answer disagree.
+const attr = (svg, cls, name) => Number(svg.match(new RegExp(`class="${cls}"[^>]*\\b${name}="([\\d.]+)"`))[1]);
+const labels = (svg) => [...svg.matchAll(/class="gs-label"[^>]*>([^<]+)</g)].map((m) => m[1]);
+const lines = (svg) => [...svg.matchAll(/class="gs-line" x1="([\d.-]+)" y1="([\d.-]+)" x2="([\d.-]+)" y2="([\d.-]+)"/g)].map((m) => m.slice(1).map(Number));
+
+test('the point is drawn where its coordinate says it is', () => {
+  const p = { easting: 11, northing: 43, x: 250, y: 750 };
+  const svg = gridSquareSvg(p);
+  const [leftLine, rightLine, bottomLine, topLine] = lines(svg);
+  const left = leftLine[0];
+  const right = rightLine[0];
+  const bottom = bottomLine[1];
+  const top = topLine[1];
+  // A quarter of the way across and three quarters of the way up.
+  assert.ok(Math.abs(attr(svg, 'gs-point', 'cx') - (left + 0.25 * (right - left))) < 0.11);
+  assert.ok(Math.abs(attr(svg, 'gs-point', 'cy') - (bottom - 0.75 * (bottom - top))) < 0.11);
+  assert.deepEqual(labels(svg), ['11', '12', '43', '44']);
+});
+
+test('the enlarged square is labeled with the 100 m lines around the point', () => {
+  const p = { easting: 11, northing: 43, x: 478, y: 263 };
+  const svg = zoomSquareSvg(p);
+  assert.deepEqual(labels(svg), ['114', '115', '432', '433']);
+  const [leftLine, rightLine, bottomLine, topLine] = lines(svg);
+  // 78 m across and 63 m up inside the 100 m square.
+  assert.ok(Math.abs(attr(svg, 'gs-point', 'cx') - (leftLine[0] + 0.78 * (rightLine[0] - leftLine[0]))) < 0.11);
+  assert.ok(Math.abs(attr(svg, 'gs-point', 'cy') - (bottomLine[1] - 0.63 * (bottomLine[1] - topLine[1]))) < 0.11);
+});
+
+test('the enlarged square carries into the next grid line at the top of a square', () => {
+  const svg = zoomSquareSvg({ easting: 11, northing: 99, x: 950, y: 950 });
+  assert.deepEqual(labels(svg), ['119', '120', '999', '000']);
+});

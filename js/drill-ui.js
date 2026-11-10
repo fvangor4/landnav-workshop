@@ -1,6 +1,6 @@
 // Wires the grid drill page to grid.js. No coordinate math lives here.
 
-import { gridFor, makePoint, checkAnswer } from './grid.js';
+import { gridFor, makePoint, checkAnswer, createScore } from './grid.js';
 import { gridSquareSvg, zoomSquareSvg } from './grid-svg.js';
 
 const $ = (id) => document.getElementById(id);
@@ -13,9 +13,7 @@ const HINTS = {
 };
 
 let point = makePoint();
-let answered = false;
-let correctCount = 0;
-let attemptCount = 0;
+const score = createScore();
 
 const digits = () => Number(document.querySelector('input[name="digits"]:checked').value);
 
@@ -37,11 +35,11 @@ function render() {
   $('answer').value = '';
   $('feedback').hidden = true;
   $('reveal').hidden = true;
-  answered = false;
 }
 
 function updateScore() {
-  $('score').textContent = attemptCount === 0 ? '' : `Correct on the first try: ${correctCount} of ${attemptCount}`;
+  $('score').textContent =
+    score.attempts === 0 ? '' : `Correct on the first try: ${score.correct} of ${score.attempts}`;
 }
 
 $('answer-form').addEventListener('submit', (event) => {
@@ -54,13 +52,9 @@ $('answer-form').addEventListener('submit', (event) => {
     return;
   }
 
-  // Only the first real attempt at each point counts toward the score.
-  if (!answered) {
-    answered = true;
-    attemptCount += 1;
-    if (result.correct) correctCount += 1;
-    updateScore();
-  }
+  // Only the first real attempt counts; createScore decides what that is.
+  score.record(n, result.correct);
+  updateScore();
 
   if (result.correct) {
     const typed = $('answer').value.replace(/\s+/g, '');
@@ -77,12 +71,14 @@ $('answer-form').addEventListener('submit', (event) => {
 });
 
 $('reveal').addEventListener('click', () => {
+  score.reveal();
   feedback('info', `Answer: ${spaced(gridFor(point, digits()))}`);
   $('reveal').hidden = true;
 });
 
 $('next').addEventListener('click', () => {
   point = makePoint();
+  score.nextPoint();
   render();
   $('answer').focus();
 });

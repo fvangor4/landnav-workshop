@@ -10,6 +10,7 @@ import {
 } from './azimuth.js';
 import { pacesForDistance, distanceFromPaces } from './pace.js';
 import { MAP_PRESET } from './config.js';
+import { presetGm, startingGm, gmToStore } from './settings.js';
 
 const $ = (id) => document.getElementById(id);
 const checked = (name) => document.querySelector(`input[name="${name}"]:checked`).value;
@@ -24,9 +25,11 @@ const store = {
       return null;
     }
   },
+  /** Saves a value, or removes the key when the value is null. */
   set(key, value) {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      if (value === null) localStorage.removeItem(key);
+      else localStorage.setItem(key, JSON.stringify(value));
     } catch {
       /* the page still works without saved values */
     }
@@ -59,20 +62,15 @@ function attempt(id, calculate) {
 
 // ---------- G-M angle conversion ----------
 
-const hasPreset = Number.isFinite(MAP_PRESET.gmAngle);
-
-function loadGm() {
-  const saved = store.get('landnav.gm');
-  if (saved && Number.isFinite(saved.angle)) return saved;
-  if (hasPreset) return { angle: MAP_PRESET.gmAngle, direction: MAP_PRESET.direction };
-  return { angle: null, direction: 'east' };
-}
+const classMap = presetGm(MAP_PRESET);
 
 function setDirection(direction) {
   document.querySelector(`input[name="dec-dir"][value="${direction}"]`).checked = true;
 }
 
-function updateDeclination() {
+// `save` is true only when the student has just edited something. Saving on
+// page load would store the class map value as if the student had typed it.
+function updateDeclination({ save = false } = {}) {
   const mode = checked('dec-mode');
   const direction = checked('dec-dir');
   const gm = read($('dec-gm'));
@@ -88,13 +86,13 @@ function updateDeclination() {
   $('dec-result').querySelector('.result-label').textContent = `${to} azimuth`;
   $('gm-mn').setAttribute('transform', `rotate(${direction === 'east' ? 20 : -20} 40 74)`);
 
-  if (gm !== null) store.set('landnav.gm', { angle: gm, direction });
+  if (save) store.set('landnav.gm', gmToStore(gm, direction, MAP_PRESET));
 
-  if (hasPreset) {
-    const dirWord = MAP_PRESET.direction === 'east' ? 'easterly' : 'westerly';
+  if (classMap) {
+    const dirWord = classMap.direction === 'east' ? 'easterly' : 'westerly';
     const label = MAP_PRESET.name ? `${MAP_PRESET.name}: ` : 'Class map: ';
     $('dec-preset').hidden = false;
-    $('dec-preset').textContent = `${label}G-M angle ${MAP_PRESET.gmAngle}° ${dirWord}.`;
+    $('dec-preset').textContent = `${label}G-M angle ${classMap.angle}° ${dirWord}.`;
   }
 
   if (gm === null) {
@@ -182,7 +180,9 @@ function updatePace({ conditionChanged = false } = {}) {
   else {
     attempt('pace-result', () => {
       const r = pacesForDistance(count, meters);
-      let work = `${count} × ${meters} ÷ 100 = ${r.total}`;
+      let work = r.rounded
+        ? `${count} × ${meters} ÷ 100 = ${r.exact}, rounded to ${r.total}`
+        : `${count} × ${meters} ÷ 100 = ${r.total}`;
       if (r.hundreds > 0 && r.remainderMeters > 0) {
         work += `. Count ${count} paces ${r.hundreds} time${r.hundreds === 1 ? '' : 's'}, then ${r.remainderPaces} more.`;
       } else if (r.hundreds > 1) {
@@ -196,8 +196,11 @@ function updatePace({ conditionChanged = false } = {}) {
   else if (count === null) show('walked-result', needCount);
   else {
     attempt('walked-result', () => {
-      const meters2 = distanceFromPaces(count, walked);
-      return { value: `${meters2} m`, work: `${walked} ÷ ${count} × 100 = ${meters2}` };
+      const covered = distanceFromPaces(count, walked);
+      // Whole only when the paces divide evenly; otherwise say it is rounded.
+      const whole = (walked * 100) % count === 0;
+      const tail = whole ? `= ${covered}` : `≈ ${covered} (nearest meter)`;
+      return { value: `${covered} m`, work: `${walked} ÷ ${count} × 100 ${tail}` };
     });
   }
 }
@@ -218,12 +221,14 @@ function convertUnits(source) {
 
 // ---------- Start ----------
 
-const gm = loadGm();
+const gm = startingGm(store.get('landnav.gm'), MAP_PRESET);
 if (gm.angle !== null) $('dec-gm').value = gm.angle;
-setDirection(gm.direction === 'west' ? 'west' : 'east');
+setDirection(gm.direction);
 $('pace-count').value = paceCounts.flat ?? '';
 
-document.querySelectorAll('#declination input').forEach((el) => el.addEventListener('input', updateDeclination));
+document.querySelectorAll('#declination input').forEach((el) =>
+  el.addEventListener('input', () => updateDeclination({ save: true })),
+);
 document.querySelectorAll('#back input').forEach((el) => el.addEventListener('input', updateBack));
 document.querySelectorAll('input[name="pace-cond"]').forEach((el) =>
   el.addEventListener('input', () => updatePace({ conditionChanged: true })),

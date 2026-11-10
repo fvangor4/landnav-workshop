@@ -105,3 +105,24 @@ test('6400 mils equal 360 degrees', () => {
   assert.equal(milsToDegrees(1600), 90);
   assert.equal(milsToDegrees(100), 5.6); // 5.625 to one decimal
 });
+
+// ---- Added after review ----
+
+test('a result of exactly 360 shows the wrap step in the work', () => {
+  const r = magneticToGrid(350, 10, 'east');
+  assert.equal(r.raw, 360);
+  assert.equal(r.wrapped, true);
+});
+
+test('G-M angle must be less than 180', () => {
+  assert.throws(() => gridToMagnetic(100, 180, 'east'), RangeError);
+  assert.equal(gridToMagnetic(100, 179.5, 'west').value, 279.5);
+});
+
+test('more than one decimal place is rejected, so the shown work is never rounded', () => {
+  assert.throws(() => gridToMagnetic(22, 8.25, 'east'), RangeError);
+  assert.throws(() => gridToMagnetic(22.25, 8, 'east'), RangeError);
+  assert.throws(() => backAzimuth(179.96), RangeError);
+  assert.throws(() => backAzimuthMils(3199.96), RangeError);
+  assert.equal(gridToMagnetic(100.1, 8.3, 'east').value, 91.8);
+});

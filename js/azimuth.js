@@ -3,10 +3,19 @@
 
 const round1 = (n) => Math.round(n * 10) / 10;
 
+// Results are shown to one decimal place. Inputs finer than that would make
+// the displayed work a rounded, and therefore false, equation.
+function requireTenths(value, label) {
+  if (Math.abs(value * 10 - Math.round(value * 10)) > 1e-6) {
+    throw new RangeError(`${label} can have at most one decimal place.`);
+  }
+}
+
 function requireAzimuth(value, max, unit) {
   if (!Number.isFinite(value) || value < 0 || value > max) {
     throw new RangeError(`Azimuth must be between 0 and ${max} ${unit}.`);
   }
+  requireTenths(value, 'Azimuth');
 }
 
 function convert(azimuth, gmAngle, operation) {
@@ -14,6 +23,7 @@ function convert(azimuth, gmAngle, operation) {
   if (!Number.isFinite(gmAngle) || gmAngle < 0 || gmAngle >= 180) {
     throw new RangeError('G-M angle must be 0 or more and less than 180 degrees.');
   }
+  requireTenths(gmAngle, 'G-M angle');
   const raw = round1(operation === 'add' ? azimuth + gmAngle : azimuth - gmAngle);
   const value = round1(((raw % 360) + 360) % 360);
   return { value, raw, operation, wrapped: raw < 0 || raw >= 360 };

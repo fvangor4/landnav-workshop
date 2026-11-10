@@ -49,3 +49,22 @@ test('pace math rejects a negative distance or pace total', () => {
   assert.throws(() => pacesForDistance(66, NaN), RangeError);
   assert.throws(() => distanceFromPaces(66, -1), RangeError);
 });
+
+// ---- Added after review ----
+
+test('leftover paces are rounded to the nearest pace, not cut off', () => {
+  const r = pacesForDistance(65, 150);
+  assert.equal(r.hundreds, 1);
+  assert.equal(r.remainderPaces, 33); // 32.5 rounds up
+});
+
+test('the unrounded figure is reported so the work can say when it rounded', () => {
+  const rounded = pacesForDistance(67, 150);
+  assert.equal(rounded.exact, 100.5);
+  assert.equal(rounded.total, 101);
+  assert.equal(rounded.rounded, true);
+
+  const whole = pacesForDistance(66, 350);
+  assert.equal(whole.exact, 231);
+  assert.equal(whole.rounded, false);
+});

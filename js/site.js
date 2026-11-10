@@ -71,11 +71,42 @@
     refresh();
   }
 
-  // Offline support. Skipped quietly where service workers are unavailable.
+  // Offline support. The Instructor page shows the outcome, so a failure to
+  // save the offline copy is visible to someone rather than silent.
+  var offlineState = 'Checking whether this device has an offline copy.';
+
+  function showOfflineState(text) {
+    offlineState = text;
+    document.querySelectorAll('[data-offline-state]').forEach(function (el) {
+      el.textContent = text;
+    });
+  }
+
+  function offlineFailed(error) {
+    console.warn('Land Nav Workshop: offline copy not saved.', error);
+    showOfflineState('This device could not save an offline copy. It needs a signal to open the site.');
+  }
+
+  function watchWorker(registration) {
+    if (registration.active) {
+      showOfflineState('This device has an offline copy.');
+      return;
+    }
+    var worker = registration.installing || registration.waiting;
+    if (!worker) return;
+    worker.addEventListener('statechange', function () {
+      if (worker.state === 'activated') showOfflineState('This device has an offline copy.');
+      // 'redundant' here means the install failed, for example a missing file.
+      if (worker.state === 'redundant') offlineFailed(new Error('service worker install failed'));
+    });
+  }
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js').catch(function () {});
+      navigator.serviceWorker.register('sw.js').then(watchWorker, offlineFailed);
     });
+  } else {
+    offlineState = 'This browser cannot save an offline copy. It needs a signal to open the site.';
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -90,5 +121,6 @@
       });
     });
     refresh();
+    showOfflineState(offlineState);
   });
 })();

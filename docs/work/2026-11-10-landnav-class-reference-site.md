@@ -79,37 +79,48 @@ width, in projector view, offline, and in print preview.
   investigate.
 
 ## Tasks
-- [ ] 1. Azimuth math: declination conversion both ways, back azimuth,
+- [~] 1. Azimuth math: declination conversion both ways, back azimuth,
       mils and degrees
       files: js/azimuth.js, tests/azimuth.test.js, package.json
-- [ ] 2. Pace count math: paces for a distance from a 100 m count, and
+      commits: [9af8567]
+- [~] 2. Pace count math: paces for a distance from a 100 m count, and
       distance from paces walked
       files: js/pace.js, tests/pace.test.js
-- [ ] 3. Grid logic: place a point in a grid square, derive its 4-, 6-,
+      commits: [ba349c0]
+- [~] 3. Grid logic: place a point in a grid square, derive its 4-, 6-,
       8-digit coordinate (read right then up, truncate), check an answer
       files: js/grid.js, tests/grid.test.js
-- [ ] 4. Seeded worksheet problem set: same seed gives the same problems
+      commits: [654c2d5]
+- [~] 4. Seeded worksheet problem set: same seed gives the same problems
       and answers, built on the modules from tasks 1 to 3
       files: js/problems.js, tests/problems.test.js
-- [ ] 5. Site shell and reference cards page, with the unofficial notice
+      commits: [32f898d]
+- [~] 5. Site shell and reference cards page, with the unofficial notice
       files: index.html, css/styles.css, js/site.js
-- [ ] 6. Calculators page wired to tasks 1 and 2, with the map preset
+      commits: [3ad91e8]
+- [~] 6. Calculators page wired to tasks 1 and 2, with the map preset
       files: tools.html, js/tools-ui.js, js/config.js
-- [ ] 7. Grid drill page wired to task 3 (drawn grid square, answer check)
+      commits: [042a303]
+- [~] 7. Grid drill page wired to task 3 (drawn grid square, answer check)
       files: drill.html, js/drill-ui.js, css/styles.css
-- [ ] 8. Instructor page and projector view toggle that persists across
+      commits: [078b552]
+- [~] 8. Instructor page and projector view toggle that persists across
       pages
       files: instructor.html, js/site.js, css/styles.css
-- [ ] 9. Printable worksheet with answer key wired to task 4, plus print
+      commits: [7a2c684]
+- [~] 9. Printable worksheet with answer key wired to task 4, plus print
       styles for the reference cards
       files: worksheet.html, js/worksheet-ui.js, css/styles.css
-- [ ] 10. Offline support: service worker caching every page and asset,
+      commits: [363a462]
+- [~] 10. Offline support: service worker caching every page and asset,
       web manifest and icon
       files: sw.js, manifest.webmanifest, icon.svg (registration in
       js/site.js)
-- [ ] 11. README, MIT LICENSE, .nojekyll; then, with the owner's go-ahead,
+      commits: [4debf19]
+- [~] 11. README, MIT LICENSE, .nojekyll; then, with the owner's go-ahead,
       push and enable GitHub Pages
       files: README.md, LICENSE, .nojekyll
+      commits: [b8868d5]
 
 ## Log
 - 2026-11-10: Audience confirmed as BLC mainly, sometimes ROTC. Students on
@@ -121,3 +132,47 @@ width, in projector view, offline, and in print preview.
   instructor path, a preloaded G-M angle, and the MIT license.
 - 2026-11-10: Escalation checklist run, no categories hit. `tests: tdd`
   because this is new feature work.
+- tasks 1-4: implemented test-first, 43 tests passing. Task 4's tests were
+  written before the module but first run after it.
+- task 5: added three cards beyond the planned five topics (contour lines,
+  grid coordinates, norths and azimuths) because the tools and drill lean on
+  them.
+- task 6: also touched css/styles.css for form and result styles.
+- task 7: added js/grid-svg.js (shared drawing code for the drill and the
+  worksheet) and an enlarged 100 m view for 8-digit grids. This commit also
+  carries a small wording fix to tools.html and js/tools-ui.js.
+- task 8: added a "Send students here" address card. A QR code was considered
+  and left out (needs an encoder; no dependencies allowed).
+- task 9: verified print rules by switching the print media rules on in the
+  browser. Real printed pagination was not checked (no headless browser on
+  this machine).
+- task 10: added tests/offline.test.js and linked the icon and manifest from
+  all five pages. Offline verified by stopping the local server and loading
+  every page.
+- task 11: added .gitignore for .claude/ (local preview config). Push and
+  Pages are not done; they wait on the owner. The class map G-M angle is
+  still unset in js/config.js.
+- review (code, whole change): 15 findings. All accepted except part of 15.
+  Fixed in one round:
+  1 class map value was saved on page load and then overrode a changed
+    preset; now saved only on a student edit, never when it equals the
+    preset, and cleared when the box is cleared (js/settings.js).
+  2 worksheet pace problems could print rounded arithmetic; problems now
+    always come out whole, and the Tools page says when it rounded.
+  3 preset direction normalized in one place.
+  4 drill score could be gamed by switching digits after a reveal; scoring
+    moved to createScore in js/grid.js.
+  5 inputs with more than one decimal place are rejected, so shown work is
+    never a rounded equation.
+  6 empty ?n= / ?gm= no longer read as 0; worksheet numbers capped at 999999.
+  7-9 service worker rewritten: the whole site is refetched on each page
+    open and the saved copy is replaced only if every file arrived. Install
+    failure is now reported on the Instructor page and in the console.
+  10-14 tests strengthened; tests/sw.test.js runs the worker against a fake
+    network and cache.
+  15 js/grid-svg.js now tested. Disagreement on the rest of 15: the page
+    scripts stay without unit tests, as the approved testing approach says.
+    The decisions that caused findings 1, 3, 4 and 6 were moved out of them
+    into tested modules instead.
+- known limit: a page that opens at the instant an update finishes could get
+  old HTML with new scripts for that one load. Not handled.

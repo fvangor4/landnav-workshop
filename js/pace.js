@@ -16,15 +16,20 @@ function requireNonNegative(value, label) {
 /**
  * Paces needed to cover a distance, given a personal 100 m pace count.
  * Also breaks the distance into full 100 m legs plus the leftover, which is
- * how a pace count is kept in practice.
+ * how a pace count is kept in practice. `exact` is the figure before rounding
+ * to a whole pace, and `rounded` says whether rounding changed it.
  */
 export function pacesForDistance(countPer100, meters) {
   requireCount(countPer100);
   requireNonNegative(meters, 'Distance');
   const hundreds = Math.floor(meters / 100);
   const remainderMeters = meters - hundreds * 100;
+  const exact = Math.round(countPer100 * meters) / 100; // to two decimals
+  const total = Math.round(exact);
   return {
-    total: Math.round((countPer100 * meters) / 100),
+    total,
+    exact,
+    rounded: total !== exact,
     hundreds,
     remainderMeters,
     remainderPaces: Math.round((countPer100 * remainderMeters) / 100),

@@ -6,6 +6,9 @@ import { gridToMagnetic, magneticToGrid, backAzimuth } from './azimuth.js';
 import { pacesForDistance, distanceFromPaces } from './pace.js';
 import { gridFor, makePoint } from './grid.js';
 
+/** Largest worksheet number. Keeps every number distinct as a 32-bit seed. */
+export const MAX_WORKSHEET_NUMBER = 999999;
+
 /** Small repeatable random source (mulberry32). Returns numbers in [0, 1). */
 export function createRng(seed) {
   let state = seed >>> 0;
@@ -29,8 +32,8 @@ export function spaced(grid) {
  * { number, type, given, question, answer, answerValue, work }.
  */
 export function makeWorksheet(seed, { gmAngle, direction }) {
-  if (!Number.isInteger(seed) || seed < 0) {
-    throw new RangeError('Worksheet number must be a whole number, 0 or more.');
+  if (!Number.isInteger(seed) || seed < 0 || seed > MAX_WORKSHEET_NUMBER) {
+    throw new RangeError(`Worksheet number must be a whole number from 0 to ${MAX_WORKSHEET_NUMBER}.`);
   }
   gridToMagnetic(0, gmAngle, direction); // validates the G-M angle and direction
 
@@ -87,8 +90,10 @@ export function makeWorksheet(seed, { gmAngle, direction }) {
   }
 
   for (let i = 0; i < 3; i += 1) {
+    // An odd pace count over an odd multiple of 50 m lands on half a pace, so
+    // only even counts get a 50 m leftover. The printed work is then exact.
     const paceCount = int(58, 72);
-    const meters = int(3, 19) * 50;
+    const meters = int(2, 9) * 100 + (paceCount % 2 === 0 ? int(0, 1) * 50 : 0);
     const result = pacesForDistance(paceCount, meters);
     add({
       type: 'paces-for-distance',

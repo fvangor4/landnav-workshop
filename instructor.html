@@ -42,7 +42,7 @@
         <h3>Send students here</h3>
         <p>Have students type this address into their phone browser:</p>
         <p class="share-url num" id="share-url"></p>
-        <p class="small muted">After the first visit the site works without a signal.</p>
+        <p class="small muted">After the first visit the site works without a signal. <span data-offline-state>Checking whether this device has an offline copy.</span></p>
       </div>
     </section>
 
@@ -78,15 +78,17 @@
 
   <script type="module">
     import { MAP_PRESET } from './js/config.js';
+    import { presetGm } from './js/settings.js';
 
     const home = new URL('./', location.href);
     document.getElementById('share-url').textContent = home.host + home.pathname;
 
     const status = document.getElementById('preset-status');
-    if (Number.isFinite(MAP_PRESET.gmAngle)) {
-      const direction = MAP_PRESET.direction === 'west' ? 'westerly' : 'easterly';
+    const classMap = presetGm(MAP_PRESET);
+    if (classMap) {
+      const direction = classMap.direction === 'west' ? 'westerly' : 'easterly';
       const name = MAP_PRESET.name ? ` for ${MAP_PRESET.name}` : '';
-      status.textContent = `The Tools page and worksheet start with a G-M angle of ${MAP_PRESET.gmAngle}° ${direction}${name}.`;
+      status.textContent = `The Tools page and worksheet start with a G-M angle of ${classMap.angle}° ${direction}${name}.`;
     } else {
       status.textContent = 'No class map is set. Students type the G-M angle from their own map.';
     }

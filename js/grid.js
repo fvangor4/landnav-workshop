@@ -29,7 +29,7 @@ export function gridFor(point, digits) {
  * judgment call and the 8-digit tolerance never crosses a 100 m line.
  */
 export function makePoint(rng = Math.random) {
-  const pick = (count) => Math.min(count - 1, Math.floor(rng() * count));
+  const pick = (count) => Math.floor(rng() * count);
   const offset = () => pick(10) * 100 + 20 + pick(60);
   return {
     easting: 10 + pick(80),
@@ -69,4 +69,37 @@ export function checkAnswer(answer, point, digits) {
     return { correct: false, expected, reason: 'reversed' };
   }
   return { correct: false, expected, reason: 'wrong' };
+}
+
+/**
+ * Score keeper for the drill. A point can be read at 4, 6, or 8 digits; each
+ * of those is scored once, on the first attempt. Once the answer has been
+ * shown, nothing more is scored on that point.
+ */
+export function createScore() {
+  let scored = new Set();
+  let correct = 0;
+  let attempts = 0;
+  return {
+    /** Returns true if this attempt counted toward the score. */
+    record(digits, isCorrect) {
+      if (scored.has(digits)) return false;
+      scored.add(digits);
+      attempts += 1;
+      if (isCorrect) correct += 1;
+      return true;
+    },
+    reveal() {
+      scored = new Set([4, 6, 8]);
+    },
+    nextPoint() {
+      scored = new Set();
+    },
+    get correct() {
+      return correct;
+    },
+    get attempts() {
+      return attempts;
+    },
+  };
 }

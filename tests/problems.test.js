@@ -94,3 +94,70 @@ test('a worksheet needs a whole-number seed and a valid G-M angle', () => {
   assert.throws(() => makeWorksheet(1, { gmAngle: -3, direction: 'east' }), RangeError);
   assert.throws(() => makeWorksheet(1, { gmAngle: 8, direction: 'up' }), RangeError);
 });
+
+// ---- Added after review ----
+
+import { MAX_WORKSHEET_NUMBER } from '../js/problems.js';
+
+// Checked against the FM 3-25.26 rule directly, not against the math modules.
+test('conversion answers and shown work follow the manual rule', () => {
+  const mod = (n) => ((n % 360) + 360) % 360;
+  for (const [direction, g2mSign] of [['east', -1], ['west', 1]]) {
+    const sheet = makeWorksheet(41, { gmAngle: 8, direction });
+    for (const p of sheet.problems.filter((q) => q.type.includes('-to-'))) {
+      const sign = p.type === 'grid-to-magnetic' ? g2mSign : -g2mSign;
+      const raw = p.given.azimuth + sign * 8;
+      assert.equal(p.answerValue, mod(raw), `problem ${p.number}`);
+      assert.equal(p.answer, `${mod(raw)}°`);
+      assert.ok(p.work.startsWith(`${p.given.azimuth}° ${sign > 0 ? '+' : '−'} 8°`), p.work);
+      assert.ok(p.work.endsWith(`= ${mod(raw)}°`), p.work);
+      if (raw < 0) assert.ok(p.work.includes('+ 360°'), p.work);
+      else if (raw >= 360) assert.ok(p.work.includes('− 360°'), p.work);
+      else assert.ok(!p.work.includes('360°'), p.work);
+    }
+  }
+});
+
+test('back azimuth problems cover both rules, with the work shown', () => {
+  const back = makeWorksheet(9, options).problems.filter((p) => p.type === 'back-azimuth');
+  assert.equal(back.filter((p) => p.given.azimuth < 180).length, 2);
+  assert.equal(back.filter((p) => p.given.azimuth >= 180).length, 2);
+  for (const p of back) {
+    const add = p.given.azimuth < 180;
+    const expected = add ? p.given.azimuth + 180 : p.given.azimuth - 180;
+    assert.equal(p.answer, `${expected}°`);
+    assert.equal(p.work, `${p.given.azimuth}° ${add ? '+' : '−'} 180° = ${expected}°`);
+  }
+});
+
+test('pace problems never need rounding, so the printed work is true arithmetic', () => {
+  for (let seed = 0; seed < 300; seed += 1) {
+    for (const p of makeWorksheet(seed, options).problems) {
+      if (p.type === 'paces-for-distance') {
+        const exact = (p.given.paceCount * p.given.meters) / 100;
+        assert.ok(Number.isInteger(exact), `seed ${seed} problem ${p.number}: ${exact}`);
+        assert.equal(p.answer, `${exact} paces`);
+        assert.equal(p.work, `${p.given.paceCount} × ${p.given.meters} ÷ 100 = ${exact}`);
+      }
+      if (p.type === 'distance-from-paces') {
+        const exact = (p.given.paces / p.given.paceCount) * 100;
+        assert.ok(Number.isInteger(exact), `seed ${seed} problem ${p.number}: ${exact}`);
+        assert.equal(p.answer, `${exact} meters`);
+        assert.equal(p.work, `${p.given.paces} ÷ ${p.given.paceCount} × 100 = ${exact}`);
+      }
+    }
+  }
+});
+
+test('the G-M angle is described in words for the sheet heading', () => {
+  assert.equal(makeWorksheet(1, { gmAngle: 8, direction: 'east' }).gmLabel, '8° easterly');
+  assert.equal(makeWorksheet(1, { gmAngle: 11.5, direction: 'west' }).gmLabel, '11.5° westerly');
+});
+
+test('worksheet numbers run from 0 to the maximum and never alias', () => {
+  assert.equal(MAX_WORKSHEET_NUMBER, 999999);
+  assert.throws(() => makeWorksheet(-1, options), RangeError);
+  assert.throws(() => makeWorksheet(MAX_WORKSHEET_NUMBER + 1, options), RangeError);
+  assert.throws(() => makeWorksheet(4294967296, options), RangeError);
+  assert.equal(makeWorksheet(MAX_WORKSHEET_NUMBER, options).seed, MAX_WORKSHEET_NUMBER);
+});
