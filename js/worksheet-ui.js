@@ -12,7 +12,7 @@ const SECTIONS = [
   { title: 'Azimuth conversion', types: ['grid-to-magnetic', 'magnetic-to-grid'] },
   { title: 'Back azimuth', types: ['back-azimuth'] },
   { title: 'Pace count', types: ['paces-for-distance', 'distance-from-paces'] },
-  { title: 'Grid coordinates', types: ['grid-coordinate'] },
+  { title: 'Grid coordinates', types: ['grid-coordinate'], className: 'grid-section' },
 ];
 
 const direction = () => document.querySelector('input[name="ws-dir"]:checked').value;
@@ -29,7 +29,7 @@ function problemHtml(p) {
   return (
     `<li value="${p.number}" class="grid-problem">` +
     `<span class="q">${p.question}${zoomNote}</span>` +
-    `<div class="ws-figures">${figures}</div>` +
+    `<div class="ws-figures${p.given.digits === 8 ? ' pair' : ''}">${figures}</div>` +
     '<span class="blank"></span></li>'
   );
 }
@@ -42,9 +42,10 @@ function sheetHtml(sheet) {
     `<p>Use a G-M angle of <strong>${sheet.gmLabel}</strong> for the conversion problems. Show your work.</p>` +
     '</header>';
 
-  const sections = SECTIONS.map(({ title, types }) => {
+  const sections = SECTIONS.map(({ title, types, className }) => {
     const items = sheet.problems.filter((p) => types.includes(p.type)).map(problemHtml);
-    return `<section class="sheet-section"><h3>${title}</h3><ol class="problems">${items.join('')}</ol></section>`;
+    const classes = className ? `sheet-section ${className}` : 'sheet-section';
+    return `<section class="${classes}"><h3>${title}</h3><ol class="problems">${items.join('')}</ol></section>`;
   });
 
   const keyRows = sheet.problems

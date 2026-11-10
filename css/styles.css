@@ -819,6 +819,10 @@ html[data-view="projector"] .gs-mid {
   color: #444;
 }
 
+.print-only {
+  display: none;
+}
+
 /* ---------- Print ---------- */
 
 @page {
@@ -828,7 +832,7 @@ html[data-view="projector"] .gs-mid {
 @media print {
   html,
   html[data-view="projector"] {
-    font-size: 10.5pt;
+    font-size: 10pt;
   }
 
   body {
@@ -886,19 +890,21 @@ html[data-view="projector"] .gs-mid {
     text-decoration: none;
   }
 
-  /* Terrain features two across, to save paper. */
+  /* Terrain features two across, to save paper. Flex rather than grid:
+     Chrome can push a whole grid to the next page, leaving page 1 empty. */
   #terrain {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.4rem;
   }
 
   #terrain > :not(.card) {
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
     margin-bottom: 0;
   }
 
   #terrain > .card {
+    flex: 0 0 calc(50% - 0.2rem);
     margin-bottom: 0;
   }
 
@@ -923,5 +929,71 @@ html[data-view="projector"] .gs-mid {
   .ws-figures .grid-square {
     flex: 0 0 5.2cm;
     max-width: 5.2cm;
+  }
+
+  /* Let long cards split across pages instead of leaving half-empty pages;
+     keep table rows, headings, and the terrain feature cards whole. */
+  .card {
+    break-inside: auto;
+  }
+
+  .feature.card,
+  .table tr,
+  .note {
+    break-inside: avoid;
+  }
+
+  .card > h3,
+  .table thead {
+    break-after: avoid;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  .print-notice {
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    color: #444;
+  }
+
+  /* Worksheet grid problems two across on their own page, so the questions
+     fit two pages and the section heading stays with its problems. */
+  .grid-section {
+    break-before: page;
+  }
+
+  .grid-section h3 {
+    margin-top: 0;
+  }
+
+  .grid-section .problems {
+    columns: 2;
+    column-gap: 1cm;
+    padding-left: 0;
+  }
+
+  .grid-section .problems li {
+    margin-left: 1.6rem;
+  }
+
+  .ws-figures.pair .grid-square {
+    flex: 0 0 4cm;
+    max-width: 4cm;
+  }
+
+  /* Tighter spacing on paper. */
+  .table th,
+  .table td {
+    padding: 0.28rem 0.5rem 0.28rem 0;
+  }
+
+  .section > h2 {
+    margin-bottom: 0.45rem;
+  }
+
+  .card > h3 {
+    margin-bottom: 0.25rem;
   }
 }

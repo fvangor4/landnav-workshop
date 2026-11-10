@@ -125,5 +125,11 @@
     });
     refresh();
     showOfflineState(offlineState);
+
+    // The site's own address, for printed handouts.
+    var home = new URL('./', window.location.href);
+    document.querySelectorAll('[data-site-address]').forEach(function (el) {
+      el.textContent = home.host + home.pathname;
+    });
   });
 })();
