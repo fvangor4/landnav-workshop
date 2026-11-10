@@ -106,7 +106,15 @@ async function alreadySaved(bodies) {
 
 /** Download the whole site and save it as a new copy. All or nothing. */
 async function saveCopy() {
-  const responses = await Promise.all(ASSETS.map((asset) => fetch(urlOf(asset), { cache: 'no-cache' })));
+  // GitHub Pages sits behind a CDN that keeps each file for up to ten
+  // minutes after a publish, and does not refresh them all at once. Asking
+  // for the same files plain could return a new page with an old stylesheet.
+  // A query unique to this download makes the CDN fetch every file fresh.
+  // About 40 KB compressed for the whole site.
+  const fresh = `sw=${Date.now()}`;
+  const responses = await Promise.all(
+    ASSETS.map((asset) => fetch(`${urlOf(asset)}?${fresh}`, { cache: 'no-store' })),
+  );
   const missing = ASSETS.filter((asset, i) => !responses[i].ok);
   if (missing.length > 0) throw new Error(`Could not fetch: ${missing.join(', ')}`);
 

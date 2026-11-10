@@ -27,6 +27,10 @@ function createWorld() {
     brokenBodies: new Set(), // hrefs whose download dies after the headers
     failingPuts: new Set(), // hrefs the phone refuses to save (storage full)
     putGates: new Map(), // href -> promise a save waits on (a write in progress)
+    // A CDN in front of the site (GitHub Pages has one) keeps its own copy of
+    // each address for a while after a publish, and does not refresh them all
+    // at once. href -> the old body it still serves for that address.
+    cdn: new Map(),
     gate: null, // when set, bodies wait on this promise before arriving
     publish: (version) => ASSETS.forEach((href) => network.set(href, `${version}:${href}`)),
     unpublish: (path) => network.delete(new URL(path, SCOPE).href),
@@ -69,12 +73,16 @@ function startWorker(world = createWorld(), scope = SCOPE) {
   };
 
   const fetch = async (target, options = {}) => {
-    const { href } = urlOf(target);
-    world.calls.push({ href, options });
+    const requested = urlOf(target);
+    const { search } = requested;
+    requested.search = '';
+    const { href } = requested;
+    world.calls.push({ href, search, options });
     if (!world.online) throw new TypeError('offline');
     if (!world.network.has(href)) return new Response('missing', { status: 404 });
 
-    const text = world.network.get(href);
+    // The CDN keys its copies by the full address, query string included.
+    const text = !search && world.cdn.has(href) ? world.cdn.get(href) : world.network.get(href);
     const broken = world.brokenBodies.has(href);
     const gate = world.gate;
     const body = new ReadableStream({
@@ -346,13 +354,30 @@ test('two copies of the site on one web address do not touch each other', async 
   assert.equal(world.stores.size, 2, 'each site keeps its own copy');
 });
 
-test('update requests bypass the browser cache, so stale files are not saved', async () => {
+test('update requests bypass the browser cache and the CDN, so stale files are not saved', async () => {
   const worker = await installed();
   worker.world.calls.length = 0;
   await worker.open('index.html');
   const updates = worker.world.calls.filter((call) => ASSETS.includes(call.href));
   assert.equal(updates.length, ASSETS.length);
-  for (const call of updates) assert.equal(call.options.cache, 'no-cache', call.href);
+  for (const call of updates) {
+    assert.equal(call.options.cache, 'no-store', call.href);
+    assert.ok(call.search, `${call.href} was fetched without a query, so the CDN can answer it`);
+  }
+});
+
+test('files the CDN still holds from before a publish are not mixed into an update', async () => {
+  const worker = await installed();
+  worker.world.publish('v2');
+  // Right after a publish: the page is new at the CDN, the stylesheet and a
+  // script are not yet.
+  for (const path of ['css/styles.css', 'js/site.js']) {
+    const href = new URL(path, SCOPE).href;
+    worker.world.cdn.set(href, `v1:${href}`);
+  }
+  await worker.open('index.html');
+  assert.ok((await worker.open('index.html')).startsWith('v2:'));
+  assert.deepEqual(await versionsServed(worker), new Set(['v2']));
 });
 
 test('two pages opened at once start a single update', async () => {
