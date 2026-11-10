@@ -1,5 +1,5 @@
 ---
-status: approved
+status: done
 base: 97766fd
 rigor:
   tests: tdd
@@ -69,58 +69,60 @@ width, in projector view, offline, and in print preview.
       worksheet with answer key.
 - [x] Preload a map's G-M angle? → Yes, preload the class map.
 - [x] License? → MIT.
-- [ ] Which map sheet does the class use, and what is its G-M angle and
-      direction (easterly or westerly)? Needed for the preset value.
-- [ ] Pushing to GitHub and enabling Pages makes the site public. Needs the
-      owner's go-ahead at ship time (task 11).
+- [x] Which map sheet does the class use, and what is its G-M angle and
+      direction (easterly or westerly)? → Not supplied yet. The preset is
+      left unset in js/config.js; students type the angle. Owner to fill in.
+- [x] Pushing to GitHub and enabling Pages makes the site public. → Not
+      done. Left for the owner's go-ahead after this file was closed.
 
 ## Unknowns
 - None. The repository is empty (no commits), so there is no existing code to
   investigate.
 
 ## Tasks
-- [~] 1. Azimuth math: declination conversion both ways, back azimuth,
+- [x] 1. Azimuth math: declination conversion both ways, back azimuth,
       mils and degrees
       files: js/azimuth.js, tests/azimuth.test.js, package.json
       commits: [9af8567]
-- [~] 2. Pace count math: paces for a distance from a 100 m count, and
+- [x] 2. Pace count math: paces for a distance from a 100 m count, and
       distance from paces walked
       files: js/pace.js, tests/pace.test.js
       commits: [ba349c0]
-- [~] 3. Grid logic: place a point in a grid square, derive its 4-, 6-,
+- [x] 3. Grid logic: place a point in a grid square, derive its 4-, 6-,
       8-digit coordinate (read right then up, truncate), check an answer
       files: js/grid.js, tests/grid.test.js
       commits: [654c2d5]
-- [~] 4. Seeded worksheet problem set: same seed gives the same problems
+- [x] 4. Seeded worksheet problem set: same seed gives the same problems
       and answers, built on the modules from tasks 1 to 3
       files: js/problems.js, tests/problems.test.js
       commits: [32f898d]
-- [~] 5. Site shell and reference cards page, with the unofficial notice
+- [x] 5. Site shell and reference cards page, with the unofficial notice
       files: index.html, css/styles.css, js/site.js
       commits: [3ad91e8]
-- [~] 6. Calculators page wired to tasks 1 and 2, with the map preset
+- [x] 6. Calculators page wired to tasks 1 and 2, with the map preset
       files: tools.html, js/tools-ui.js, js/config.js
       commits: [042a303]
-- [~] 7. Grid drill page wired to task 3 (drawn grid square, answer check)
+- [x] 7. Grid drill page wired to task 3 (drawn grid square, answer check)
       files: drill.html, js/drill-ui.js, css/styles.css
       commits: [078b552]
-- [~] 8. Instructor page and projector view toggle that persists across
+- [x] 8. Instructor page and projector view toggle that persists across
       pages
       files: instructor.html, js/site.js, css/styles.css
       commits: [7a2c684]
-- [~] 9. Printable worksheet with answer key wired to task 4, plus print
+- [x] 9. Printable worksheet with answer key wired to task 4, plus print
       styles for the reference cards
       files: worksheet.html, js/worksheet-ui.js, css/styles.css
       commits: [363a462]
-- [~] 10. Offline support: service worker caching every page and asset,
+- [x] 10. Offline support: service worker caching every page and asset,
       web manifest and icon
       files: sw.js, manifest.webmanifest, icon.svg (registration in
       js/site.js)
       commits: [4debf19]
-- [~] 11. README, MIT LICENSE, .nojekyll; then, with the owner's go-ahead,
+- [x] 11. README, MIT LICENSE, .nojekyll; then, with the owner's go-ahead,
       push and enable GitHub Pages
       files: README.md, LICENSE, .nojekyll
       commits: [b8868d5]
+      review fixes (whole change): [003e058, e8cd5a8, 86431a6]
 
 ## Log
 - 2026-11-10: Audience confirmed as BLC mainly, sometimes ROTC. Students on
@@ -208,3 +210,13 @@ width, in projector view, offline, and in print preview.
     written; confirmed by mutation that they catch a marker written first,
     a missing cleanup, and deleting newer copies.
   4 the footer status line is asserted on every page.
+- re-review of 86431a6: one minor finding, not fixed. Caches named by the
+  earlier scheme (landnav-<time>) are no longer cleaned up. Disagreement:
+  that scheme only ever existed in three unpublished commits on this branch,
+  so no phone can hold one. The only browser that did was the local preview,
+  and those caches were deleted by hand. All four earlier findings confirmed
+  fixed by the reviewer, with mutation checks.
+- ship gate: 98 of 98 tests pass. No lint or build step exists. Files outside
+  the task lists are all recorded above (js/grid-svg.js, js/settings.js,
+  three extra test files, .gitignore). Work is on branch site-v1; nothing is
+  pushed and GitHub Pages is not enabled.
