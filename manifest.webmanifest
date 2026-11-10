@@ -1,0 +1,13 @@
+{
+  "name": "Land Nav Workshop",
+  "short_name": "Land Nav",
+  "description": "Reference cards, calculators, and a grid drill for a land navigation class.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efeadb",
+  "theme_color": "#45562a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
