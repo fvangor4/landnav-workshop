@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Worksheet | Land Nav Workshop</title>
+  <meta name="description" content="Printable land navigation practice worksheet with a separate answer key.">
+  <meta name="theme-color" content="#45562a">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/site.js"></script>
+  <script type="module" src="js/worksheet-ui.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Land Nav <span>Workshop</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Reference</a>
+        <a href="tools.html">Tools</a>
+        <a href="drill.html">Grid drill</a>
+        <a href="instructor.html" aria-current="page">Instructor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="no-print">
+      <h1 class="page-title">Printable worksheet</h1>
+      <p class="lede">Set the worksheet number and G-M angle, then print. The answer key prints on its own page.</p>
+
+      <div class="card">
+        <div class="pair">
+          <div class="field">
+            <label for="ws-number">Worksheet number</label>
+            <input id="ws-number" type="number" inputmode="numeric" min="0" max="999999" step="1">
+          </div>
+          <div class="field">
+            <label for="ws-gm">G-M angle (degrees)</label>
+            <input id="ws-gm" type="number" inputmode="decimal" min="0" max="179.5" step="0.5" placeholder="from your map">
+          </div>
+        </div>
+        <fieldset class="seg">
+          <legend>G-M angle direction</legend>
+          <label><input type="radio" name="ws-dir" value="east" checked><span>Easterly</span></label>
+          <label><input type="radio" name="ws-dir" value="west"><span>Westerly</span></label>
+        </fieldset>
+        <p class="small muted">The same number and G-M angle always give the same problems. Write the number down to reprint a sheet or its key.</p>
+        <div class="btn-row">
+          <button class="btn" type="button" data-action="print">Print</button>
+          <button class="btn secondary" type="button" id="ws-new">New worksheet</button>
+        </div>
+        <p class="feedback bad" id="ws-error" hidden></p>
+      </div>
+    </div>
+
+    <div id="ws-output"></div>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Unofficial training aid.</strong> Not endorsed by the U.S. Army or the Department of Defense. Follow your instructor and current doctrine.</p>
+    <p>Written from FM 3-25.26, Map Reading and Land Navigation (approved for public release; distribution is unlimited).</p>
+  </footer>
+</body>
+</html>

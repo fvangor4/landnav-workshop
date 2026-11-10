@@ -55,8 +55,9 @@ export function makeWorksheet(seed, { gmAngle, direction }) {
       const azimuth = i === 0 ? wrappingAzimuth(operation) : int(0, 359);
       const result = convert(azimuth, gmAngle, direction);
       const sign = result.operation === 'add' ? '+' : '−';
+      const raw = String(result.raw).replace('-', '−');
       const wrapNote = result.wrapped
-        ? ` = ${result.raw}°, ${result.raw < 0 ? '+' : '−'} 360°`
+        ? ` = ${raw}°; ${raw}° ${result.raw < 0 ? '+' : '−'} 360°`
         : '';
       add({
         type,
