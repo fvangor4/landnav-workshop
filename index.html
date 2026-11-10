@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reference cards | Land Nav Workshop</title>
+  <meta name="description" content="Quick-reference cards for a land navigation class: terrain features, map colors, marginal information, compass, grids, mils and degrees.">
+  <meta name="theme-color" content="#45562a">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/site.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Land Nav <span>Workshop</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./" aria-current="page">Reference</a>
+        <a href="tools.html">Tools</a>
+        <a href="drill.html">Grid drill</a>
+        <a href="instructor.html">Instructor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="page-title">Reference cards</h1>
+    <p class="lede">The parts of map reading you look up most in class. Written from FM 3-25.26.</p>
+
+    <ul class="chips" aria-label="Jump to a card">
+      <li><a href="#terrain">Terrain</a></li>
+      <li><a href="#contours">Contours</a></li>
+      <li><a href="#colors">Colors</a></li>
+      <li><a href="#margin">Margin</a></li>
+      <li><a href="#grids">Grids</a></li>
+      <li><a href="#norths">Norths</a></li>
+      <li><a href="#compass">Compass</a></li>
+      <li><a href="#mils">Mils</a></li>
+    </ul>
+
+    <!-- ===================== Terrain features ===================== -->
+    <section class="section" id="terrain">
+      <h2>Terrain features</h2>
+      <p class="muted small">Ten features: 5 major, 3 minor, 2 supplementary. In each sketch, brown lines are contour lines and blue is water.</p>
+
+      <p class="group-label">Major (5)</p>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Hill: closed contour lines, one inside the next">
+          <g transform="rotate(-8 60 42)">
+            <ellipse class="sk-c" cx="60" cy="42" rx="48" ry="32"/>
+            <ellipse class="sk-c" cx="60" cy="42" rx="34" ry="22"/>
+            <ellipse class="sk-c" cx="60" cy="42" rx="20" ry="12.5"/>
+            <ellipse class="sk-c" cx="60" cy="42" rx="7" ry="4.5"/>
+          </g>
+        </svg>
+        <div>
+          <h3>Hill</h3>
+          <p><strong>Ground:</strong> High ground. From the top, the ground slopes down in every direction.</p>
+          <p><strong>Map:</strong> Closed contour lines, one inside the next. The smallest closed line is the hilltop.</p>
+        </div>
+      </article>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Saddle: two hilltops inside an hourglass-shaped contour line">
+          <path class="sk-c" d="M5 42 C5 4 46 4 60 21 C74 4 115 4 115 42 C115 80 74 80 60 63 C46 80 5 80 5 42Z"/>
+          <path class="sk-c" d="M15 42 C15 16 46 16 60 32 C74 16 105 16 105 42 C105 68 74 68 60 52 C46 68 15 68 15 42Z"/>
+          <ellipse class="sk-c" cx="36" cy="42" rx="13" ry="12"/>
+          <ellipse class="sk-c" cx="36" cy="42" rx="5" ry="4.5"/>
+          <ellipse class="sk-c" cx="84" cy="42" rx="13" ry="12"/>
+          <ellipse class="sk-c" cx="84" cy="42" rx="5" ry="4.5"/>
+          <circle cx="60" cy="42" r="2" fill="#1c2117"/>
+        </svg>
+        <div>
+          <h3>Saddle</h3>
+          <p><strong>Ground:</strong> A dip between two areas of higher ground. High ground in two opposite directions, lower ground in the other two.</p>
+          <p><strong>Map:</strong> An hourglass shape between two hilltops.</p>
+        </div>
+      </article>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Valley: U-shaped contour lines with the closed end pointing toward high ground and a stream through the middle">
+          <path class="sk-c" d="M8 40 C30 34 44 4 60 4 C76 4 90 34 112 40"/>
+          <path class="sk-c" d="M8 58 C30 52 44 22 60 22 C76 22 90 52 112 58"/>
+          <path class="sk-c" d="M8 76 C30 70 44 40 60 40 C76 40 90 70 112 76"/>
+          <path class="sk-w" d="M60 2 C58 20 63 30 60 44 C57 58 62 68 60 82"/>
+          <text class="sk-t" x="4" y="10">HIGH</text>
+          <text class="sk-t" x="4" y="82">LOW</text>
+        </svg>
+        <div>
+          <h3>Valley</h3>
+          <p><strong>Ground:</strong> A long groove in the land, usually with a stream or river. High ground on three sides, low ground on the fourth.</p>
+          <p><strong>Map:</strong> U- or V-shaped contour lines. The closed end points upstream, toward high ground.</p>
+        </div>
+      </article>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Ridge: U-shaped contour lines with the closed end pointing toward low ground">
+          <path class="sk-c" d="M8 8 C30 14 44 44 60 44 C76 44 90 14 112 8"/>
+          <path class="sk-c" d="M8 26 C30 32 44 62 60 62 C76 62 90 32 112 26"/>
+          <path class="sk-c" d="M8 44 C30 50 44 80 60 80 C76 80 90 50 112 44"/>
+          <text class="sk-t" x="60" y="12" text-anchor="middle">HIGH</text>
+          <text class="sk-t" x="4" y="80">LOW</text>
+        </svg>
+        <div>
+          <h3>Ridge</h3>
+          <p><strong>Ground:</strong> A sloping line of high ground. On the centerline, low ground in three directions and high ground in one.</p>
+          <p><strong>Map:</strong> U- or V-shaped contour lines. The closed end points away from high ground.</p>
+        </div>
+      </article>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Depression: closed contour lines with tick marks pointing inward">
+          <g class="sk-thin" transform="translate(60 42) scale(1.45) translate(-60 -42)">
+          <ellipse class="sk-c" cx="60" cy="42" rx="30" ry="20"/>
+          <path class="sk-c" d="M90 42H85M81.2 56.1L77.7 53.3M60 62V58M38.8 56.1L42.3 53.3M30 42H35M38.8 27.9L42.3 30.7M60 22V26M81.2 27.9L77.7 30.7"/>
+          <ellipse class="sk-c" cx="60" cy="42" rx="14" ry="9"/>
+          <path class="sk-c" d="M74 42H70M69.9 48.4L67.1 46.2M60 51V48M50.1 48.4L52.9 46.2M46 42H50M50.1 35.6L52.9 37.8M60 33V36M69.9 35.6L67.1 37.8"/>
+          </g>
+        </svg>
+        <div>
+          <h3>Depression</h3>
+          <p><strong>Ground:</strong> A low point or sinkhole. Higher ground in every direction.</p>
+          <p><strong>Map:</strong> Closed contour lines with tick marks pointing toward low ground.</p>
+        </div>
+      </article>
+
+      <p class="group-label">Minor (3)</p>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Draw: V-shaped notches in the contour lines pointing toward high ground">
+          <path class="sk-c" d="M6 30 L46 30 L60 6 L74 30 L114 30"/>
+          <path class="sk-c" d="M6 50 L47 50 L60 28 L73 50 L114 50"/>
+          <path class="sk-c" d="M6 70 L48 70 L60 50 L72 70 L114 70"/>
+          <text class="sk-t" x="4" y="12">HIGH</text>
+          <text class="sk-t" x="4" y="82">LOW</text>
+        </svg>
+        <div>
+          <h3>Draw</h3>
+          <p><strong>Ground:</strong> A small, less developed valley with almost no level ground. The ground rises on three sides and drops on the fourth.</p>
+          <p><strong>Map:</strong> U- or V-shaped contour lines pointing toward high ground.</p>
+        </div>
+      </article>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Spur: rounded bulges in the contour lines pointing toward low ground">
+          <path class="sk-c" d="M6 14 L38 14 C46 14 50 40 60 40 C70 40 74 14 82 14 L114 14"/>
+          <path class="sk-c" d="M6 32 L38 32 C46 32 50 58 60 58 C70 58 74 32 82 32 L114 32"/>
+          <path class="sk-c" d="M6 50 L38 50 C46 50 50 76 60 76 C70 76 74 50 82 50 L114 50"/>
+          <text class="sk-t" x="4" y="9">HIGH</text>
+          <text class="sk-t" x="4" y="80">LOW</text>
+        </svg>
+        <div>
+          <h3>Spur</h3>
+          <p><strong>Ground:</strong> A short, continuous sloping line of higher ground, usually jutting out from the side of a ridge. The ground drops in three directions and rises in one.</p>
+          <p><strong>Map:</strong> U- or V-shaped contour lines pointing away from high ground.</p>
+        </div>
+      </article>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Cliff: contour lines merging into one line with tick marks pointing toward low ground">
+          <path class="sk-c" d="M5 16 C32 16 38 42 48 42 L72 42 C82 42 88 16 115 16"/>
+          <path class="sk-c" d="M5 30 C30 30 38 42 48 42 M72 42 C82 42 90 30 115 30"/>
+          <path class="sk-c" d="M5 54 C30 54 38 42 48 42 M72 42 C82 42 90 54 115 54"/>
+          <path class="sk-c" d="M5 68 C32 68 38 42 48 42 M72 42 C82 42 88 68 115 68"/>
+          <path class="sk-c" d="M50 42V48M55.5 42V48M61 42V48M66.5 42V48M71 42V48"/>
+          <text class="sk-t" x="60" y="10" text-anchor="middle">HIGH</text>
+          <text class="sk-t" x="60" y="80" text-anchor="middle">LOW</text>
+        </svg>
+        <div>
+          <h3>Cliff</h3>
+          <p><strong>Ground:</strong> A vertical or near-vertical drop. An abrupt change in the land.</p>
+          <p><strong>Map:</strong> Contour lines very close together or merged into one line, with tick marks pointing toward low ground.</p>
+        </div>
+      </article>
+
+      <p class="group-label">Supplementary (2)</p>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Cut: a road passing through a hill, with ticked lines on both sides pointing toward the road">
+          <ellipse class="sk-c" cx="60" cy="42" rx="34" ry="36"/>
+          <ellipse class="sk-c" cx="60" cy="42" rx="20" ry="24"/>
+          <rect class="sk-bg" x="20" y="29" width="80" height="26"/>
+          <path class="sk-r" d="M4 39H116M4 45H116"/>
+          <path class="sk-c" d="M30 30H90M34 30V35M42 30V35M50 30V35M58 30V35M66 30V35M74 30V35M82 30V35"/>
+          <path class="sk-c" d="M30 54H90M38 54V49M46 54V49M54 54V49M62 54V49M70 54V49M78 54V49M86 54V49"/>
+        </svg>
+        <div>
+          <h3>Cut</h3>
+          <p><strong>Ground:</strong> Man-made. Raised ground cut through to make a level bed for a road or railroad.</p>
+          <p><strong>Map:</strong> A line along the cut with tick marks running from it toward the roadbed. Shown when at least 10 feet high.</p>
+        </div>
+      </article>
+
+      <article class="card feature">
+        <svg viewBox="0 0 120 84" role="img" aria-label="Fill: a road crossing a low area, with tick marks pointing away from the road toward lower ground">
+          <path class="sk-c" d="M10 4 C40 10 50 26 60 26 C70 26 80 10 110 4"/>
+          <path class="sk-c" d="M6 70 C36 74 50 84 60 84 C70 84 84 74 114 70"/>
+          <path class="sk-w" d="M60 2 L60 82" stroke-dasharray="4 3"/>
+          <rect class="sk-bg" x="26" y="31" width="68" height="22"/>
+          <path class="sk-r" d="M4 39H116M4 45H116"/>
+          <path class="sk-c" d="M30 37H90M34 37V32M42 37V32M50 37V32M58 37V32M66 37V32M74 37V32M82 37V32"/>
+          <path class="sk-c" d="M30 47H90M38 47V52M46 47V52M54 47V52M62 47V52M70 47V52M78 47V52M86 47V52"/>
+        </svg>
+        <div>
+          <h3>Fill</h3>
+          <p><strong>Ground:</strong> Man-made. A low area filled in to make a level bed for a road or railroad.</p>
+          <p><strong>Map:</strong> A line along the fill with tick marks pointing toward lower ground. Shown when at least 10 feet high.</p>
+        </div>
+      </article>
+
+      <p class="note"><strong>Memory aid for the five major features</strong> (a common one, not from the manual): <strong>H</strong>idden <strong>V</strong>alley <strong>R</strong>anch <strong>S</strong>alad <strong>D</strong>ressing. Hill, Valley, Ridge, Saddle, Depression.</p>
+    </section>
+
+    <!-- ===================== Contour lines ===================== -->
+    <section class="section" id="contours">
+      <h2>Contour lines</h2>
+      <div class="card">
+        <p>A contour line connects points of equal elevation. The contour interval, printed in the margin, is the vertical distance between lines.</p>
+        <table class="table">
+          <tbody>
+            <tr><th scope="row">Index</th><td>The heavier line, every fifth contour. Labeled with its elevation.</td></tr>
+            <tr><th scope="row">Intermediate</th><td>The finer lines between index lines. Not labeled. Normally four between each pair of index lines.</td></tr>
+            <tr><th scope="row">Supplementary</th><td>Dashed lines at half the contour interval. Used where the ground changes too gently for the normal interval to show it.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Lines close together mean a steep slope. Lines far apart mean a gentle slope.</p>
+      </div>
+    </section>
+
+    <!-- ===================== Map colors ===================== -->
+    <section class="section" id="colors">
+      <h2>Map colors</h2>
+      <div class="card">
+        <table class="table">
+          <tbody>
+            <tr><th scope="row"><span class="swatch" style="background:#111"></span>Black</th><td>Man-made (cultural) features such as buildings and roads, surveyed spot elevations, and all labels.</td></tr>
+            <tr><th scope="row"><span class="swatch" style="background:#a4532a"></span>Red-brown</th><td>On red-light readable maps: cultural features, all relief features, non-surveyed spot elevations, and contour lines.</td></tr>
+            <tr><th scope="row"><span class="swatch" style="background:#2b78c2"></span>Blue</th><td>Water: lakes, swamps, rivers, and drainage.</td></tr>
+            <tr><th scope="row"><span class="swatch" style="background:#4c9a46"></span>Green</th><td>Vegetation with military significance: woods, orchards, and vineyards.</td></tr>
+            <tr><th scope="row"><span class="swatch" style="background:#7a4a21"></span>Brown</th><td>Relief and elevation, such as contour lines, on older maps. Cultivated land on red-light readable maps.</td></tr>
+            <tr><th scope="row"><span class="swatch" style="background:#d12a1f"></span>Red</th><td>On older maps: populated areas, main roads, and boundaries.</td></tr>
+            <tr><th scope="row"><span class="swatch" style="background:linear-gradient(135deg,#8e44ad 50%,#f39c12 50%)"></span>Other</th><td>Occasionally used for special information. The marginal information says what they mean.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== Marginal information ===================== -->
+    <section class="section" id="margin">
+      <h2>Marginal information</h2>
+      <div class="card">
+        <p class="muted small">Where items normally sit on a 1:50,000 military map. Layouts vary, so check your own sheet.</p>
+        <table class="table">
+          <thead>
+            <tr><th scope="col">Item</th><th scope="col">Where</th><th scope="col">What it tells you</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Sheet name</th><td>Top center, lower left</td><td>Named for the largest settlement or main feature on the sheet.</td></tr>
+            <tr><th scope="row">Sheet number</th><td>Upper right, lower left</td><td>Identifies this sheet. Used when ordering or referencing maps.</td></tr>
+            <tr><th scope="row">Series name, scale</th><td>Upper left</td><td>The map series and the scale, such as 1:50,000.</td></tr>
+            <tr><th scope="row">Edition number</th><td>Upper right, lower left</td><td>The age of the map compared with other editions. Higher is newer.</td></tr>
+            <tr><th scope="row">Bar scales</th><td>Bottom center</td><td>Convert map distance to ground distance.</td></tr>
+            <tr><th scope="row">Contour interval</th><td>Bottom center, under the bar scales</td><td>Vertical distance between contour lines.</td></tr>
+            <tr><th scope="row">Grid reference box</th><td>Bottom center</td><td>How to write a grid, and the 100,000 m square letters.</td></tr>
+            <tr><th scope="row">Declination diagram</th><td>Lower margin</td><td>True, grid, and magnetic north, and the G-M angle.</td></tr>
+            <tr><th scope="row">Legend</th><td>Lower left</td><td>The symbols used on this sheet.</td></tr>
+            <tr><th scope="row">Adjoining sheets</th><td>Lower right</td><td>The sheets that border this one.</td></tr>
+            <tr><th scope="row">Elevation guide</th><td>Lower right</td><td>A small sketch of the high and low ground on the sheet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== Grid coordinates ===================== -->
+    <section class="section" id="grids">
+      <h2>Grid coordinates</h2>
+      <div class="card">
+        <p class="note"><strong>Read right, then up.</strong> Start at the lower-left corner of the grid square. Never round up.</p>
+        <table class="table">
+          <thead>
+            <tr><th scope="col">Digits</th><th scope="col">Locates to within</th><th scope="col">Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">4</th><td>1,000 m</td><td class="num">11 43</td></tr>
+            <tr><th scope="row">6</th><td>100 m</td><td class="num">114 432</td></tr>
+            <tr><th scope="row">8</th><td>10 m</td><td class="num">1147 4326</td></tr>
+            <tr><th scope="row">10</th><td>1 m</td><td class="num">11478 43263</td></tr>
+          </tbody>
+        </table>
+        <p class="small muted">A full grid coordinate starts with the two letters of the 100,000 m square, found in the grid reference box.</p>
+        <p class="small">On a 1:50,000 map, one grid square is 1,000 m on each side. <a href="drill.html">Practice in the grid drill.</a></p>
+      </div>
+    </section>
+
+    <!-- ===================== Norths and azimuths ===================== -->
+    <section class="section" id="norths">
+      <h2>Norths and azimuths</h2>
+      <div class="card">
+        <table class="table">
+          <tbody>
+            <tr><th scope="row">True north</th><td>The line to the North Pole. Shown with a star.</td></tr>
+            <tr><th scope="row">Magnetic north</th><td>Where the compass needle points. Shown with a half arrowhead.</td></tr>
+            <tr><th scope="row">Grid north</th><td>The direction of the vertical grid lines on the map. Shown as GN.</td></tr>
+          </tbody>
+        </table>
+        <p class="small"><strong>Azimuth:</strong> a horizontal angle measured clockwise from a north base line. A <strong>grid azimuth</strong> is measured on the map with a protractor. A <strong>magnetic azimuth</strong> is measured with a compass.</p>
+        <p class="small"><strong>G-M angle:</strong> the angle between grid north and magnetic north, read from the declination diagram. You apply it every time you move an azimuth between the map and the compass.</p>
+      </div>
+      <div class="card">
+        <h3>Converting azimuths</h3>
+        <table class="table">
+          <thead>
+            <tr><th scope="col">G-M angle</th><th scope="col">Grid to magnetic</th><th scope="col">Magnetic to grid</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Easterly</th><td>Subtract</td><td>Add</td></tr>
+            <tr><th scope="row">Westerly</th><td>Add</td><td>Subtract</td></tr>
+          </tbody>
+        </table>
+        <p class="note"><strong>LARS</strong> (a common memory aid, not from the manual): on the declination diagram, move from the north you have to the north you want. <strong>L</strong>eft <strong>A</strong>dd, <strong>R</strong>ight <strong>S</strong>ubtract.</p>
+        <p class="small"><strong>Back azimuth:</strong> the opposite direction. Add 180° if the azimuth is less than 180°. Subtract 180° if it is 180° or more. <a href="tools.html">Open the calculators.</a></p>
+      </div>
+    </section>
+
+    <!-- ===================== Compass ===================== -->
+    <section class="section" id="compass">
+      <h2>Lensatic compass</h2>
+      <div class="card">
+        <h3>Parts</h3>
+        <table class="table">
+          <tbody>
+            <tr><th scope="row">Cover</th><td>Protects the dial. Holds the sighting wire and two luminous dots for night use.</td></tr>
+            <tr><th scope="row">Base</th><td>Floating dial, bezel ring, fixed black index line, luminous magnetic arrow, and thumb loop.</td></tr>
+            <tr><th scope="row">Lens</th><td>The rear sight. The lens reads the dial and the slot is for sighting. Open it more than 45° or the dial stays locked.</td></tr>
+          </tbody>
+        </table>
+        <ul class="small" style="margin-top:0.6rem">
+          <li><strong>Dial:</strong> outer black ring is mils, inner red ring is degrees.</li>
+          <li><strong>Bezel ring:</strong> 120 clicks in a full turn. Each click is 3°.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Two ways to hold it</h3>
+        <table class="table">
+          <tbody>
+            <tr><th scope="row">Centerhold</th><td>Compass level at your waist, elbows tight, both thumbs through the loop. Faster, works in any visibility, and you keep your helmet and eyewear on.</td></tr>
+            <tr><th scope="row">Compass-to-cheek</th><td>Cover upright, rear sight to your eye, sight through the slot along the wire. Slower and more accurate. Use it when precision matters.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Keep clear of metal and electricity</h3>
+        <table class="table">
+          <tbody>
+            <tr><th scope="row">High-tension power lines</th><td class="num">55 m</td></tr>
+            <tr><th scope="row">Field gun, truck, or tank</th><td class="num">18 m</td></tr>
+            <tr><th scope="row">Telephone wire, barbed wire</th><td class="num">10 m</td></tr>
+            <tr><th scope="row">Machine gun</th><td class="num">2 m</td></tr>
+            <tr><th scope="row">Steel helmet or rifle</th><td class="num">0.5 m</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== Mils and degrees ===================== -->
+    <section class="section" id="mils">
+      <h2>Mils and degrees</h2>
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr><th scope="col">Direction</th><th scope="col">Degrees</th><th scope="col">Mils</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">North</th><td class="num">0 / 360</td><td class="num">0 / 6400</td></tr>
+            <tr><th scope="row">East</th><td class="num">90</td><td class="num">1600</td></tr>
+            <tr><th scope="row">South</th><td class="num">180</td><td class="num">3200</td></tr>
+            <tr><th scope="row">West</th><td class="num">270</td><td class="num">4800</td></tr>
+          </tbody>
+        </table>
+        <ul class="small" style="margin-top:0.6rem">
+          <li>A circle is 360 degrees or 6400 mils.</li>
+          <li>1 degree is about 17.8 mils.</li>
+          <li>Back azimuth in mils: add or subtract 3200.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="btn-row no-print">
+      <button class="btn secondary" type="button" data-action="print">Print these cards</button>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Unofficial training aid.</strong> Not endorsed by the U.S. Army or the Department of Defense. Follow your instructor and current doctrine.</p>
+    <p>Written from FM 3-25.26, Map Reading and Land Navigation (approved for public release; distribution is unlimited).</p>
+  </footer>
+</body>
+</html>
